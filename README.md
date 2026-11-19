@@ -23,14 +23,18 @@ The 'gpt-6-luna' model is not supported when using Codex with a ChatGPT account.
 ## Установка форка
 
 Пакет: [`packages/dsh-subagent-codex-next`](packages/dsh-subagent-codex-next/README.md),
-версия `0.2.2-rc.1-dsh.1`, Codex `0.166.0` (exact pin), DSH `0.2.2-rc.x`.
+версия `0.2.2-rc.5-dsh.1`, Codex `0.166.0` (exact pin), DSH `0.2.2-rc.5` (deps/peers привязаны к этой версии хоста).
 
 ### 1. Скачать tarball из GitHub Release
 
 Страница релизов: <https://github.com/dkubatov/dsh-subagents-plugin/releases>
 
+- актуальный релиз для DSH **0.2.2-rc.5** — `v0.2.2-rc.5-dsh.1`;
+- для DSH `0.2.2-rc.1` сохранён прежний релиз
+  [`v0.2.2-rc.1-dsh.1`](https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.1-dsh.1).
+
 ```text
-https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.1-dsh.1/dsh-subagent-codex-next-0.2.2-rc.1-dsh.1.tgz
+https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.1/dsh-subagent-codex-next-0.2.2-rc.5-dsh.1.tgz
 ```
 
 ### 2. Установить как bundle через `plugin_manager`
@@ -38,13 +42,13 @@ https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.1-d
 ```json
 {
   "action": "install_bundle",
-  "target": "https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.1-dsh.1/dsh-subagent-codex-next-0.2.2-rc.1-dsh.1.tgz",
+  "target": "https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.1/dsh-subagent-codex-next-0.2.2-rc.5-dsh.1.tgz",
   "enabled": true
 }
 ```
 
 Либо локально, если tarball уже на диске:
-`"target": "file:D:\\path\\dsh-subagent-codex-next-0.2.2-rc.1-dsh.1.tgz"`.
+`"target": "file:D:\\path\\dsh-subagent-codex-next-0.2.2-rc.5-dsh.1.tgz"`.
 
 После установки: выключить upstream-bundle `@deepseek-ai/dsh-subagent-codex`,
 убрать его `insert`-строки из `cordis.patch.yml` профиля и перезапустить DSH —

@@ -1,6 +1,6 @@
 # dsh-subagent-codex-next
 
-Форк `@deepseek-ai/dsh-subagent-codex@0.2.2-rc.1` для DeepSeek Harness (DSH).
+Форк `@deepseek-ai/dsh-subagent-codex@0.2.2-rc.5` для DeepSeek Harness (DSH) 0.2.2-rc.5.
 Один и тот же провайдер одноразовых Codex-субагентов (`subagent_codex`) поверх
 официального `codex app-server --stdio`, но с современным Codex-payload и
 настраиваемым исполняемым файлом.
@@ -32,7 +32,7 @@ master GitHub-репозитория — тоже.
 | 1 | `dependencies.@openai/codex`: `0.153.4` → **`0.166.0`** (exact pin) | `package.json` |
 | 2 | Новые необязательные опции экземпляра провайдера: `codexPackage`, `codexBin`, `command` | `src/run.ts`, `src/index.ts`, `lib/index.js` |
 | 3 | Пакет называется `dsh-subagent-codex-next`; `name`-экспорт и id строк слоя получили суффикс `-next`, чтобы жить рядом с upstream | `package.json`, `cordis.patch.yml`, `lib/index.js` |
-| 4 | Peer-диапазоны ослаблены до `>=0.2.2-rc.1 <0.2.3-0`, чтобы форк переживал обновления хоста внутри rc-серии | `package.json` |
+| 4 | Пакет привязан к хосту: deps/peers — exact `0.2.2-rc.5`, `engines.dsh: >=0.2.2-rc.5 <0.2.3-0` | `package.json` |
 | 5 | Добавлен интеграционный probe `scripts/probe-app-server.mjs` | `scripts/` |
 | 6 | В репозиторий положен TypeScript-исходник upstream (rc.5) с теми же правками; `lib/index.js` — собранный артефакт | `src/`, `lib/` |
 
@@ -108,14 +108,19 @@ Wire-код (JSON-RPC, выбор ответа, approval-ответы, teardown)
 Профиль: `C:\Users\<you>\.dsh\profiles\desktop`. Форк ставится как **отдельный
 bundle**, рядом с upstream (не поверх него).
 
+> **Версия хоста.** Артефакт `0.2.2-rc.5-dsh.1` привязан к DSH **0.2.2-rc.5**
+> (deps/peers exact). Для DSH `0.2.2-rc.1` остаётся предыдущий релиз
+> [`v0.2.2-rc.1-dsh.1`](https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.1-dsh.1).
+
+
 ### 0. Готовый tarball из GitHub Release (рекомендуется)
 
-Релиз: <https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.1-dsh.1>
+Релиз: <https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.5-dsh.1>
 
 ```json
 {
   "action": "install_bundle",
-  "target": "https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.1-dsh.1/dsh-subagent-codex-next-0.2.2-rc.1-dsh.1.tgz",
+  "target": "https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.1/dsh-subagent-codex-next-0.2.2-rc.5-dsh.1.tgz",
   "enabled": true
 }
 ```
@@ -128,13 +133,13 @@ bundle**, рядом с upstream (не поверх него).
 ```powershell
 cd D:\Repos\DSH\plugins\subagents\packages\dsh-subagent-codex-next
 npm pack --pack-destination .artifacts
-# .artifacts\dsh-subagent-codex-next-0.2.2-rc.1-dsh.1.tgz
+# .artifacts\dsh-subagent-codex-next-0.2.2-rc.5-dsh.1.tgz
 ```
 
 ### 2. Установить локальный tarball через `plugin_manager`
 
 ```json
-{"action":"install_bundle","target":"file:D:\\Repos\\DSH\\plugins\\subagents\\packages\\dsh-subagent-codex-next\\.artifacts\\dsh-subagent-codex-next-0.2.2-rc.1-dsh.1.tgz","enabled":true}
+{"action":"install_bundle","target":"file:D:\\Repos\\DSH\\plugins\\subagents\\packages\\dsh-subagent-codex-next\\.artifacts\\dsh-subagent-codex-next-0.2.2-rc.5-dsh.1.tgz","enabled":true}
 ```
 
 `install_bundle` принимает `file:`-спеки (см. README `dsh-plugin-manager`:

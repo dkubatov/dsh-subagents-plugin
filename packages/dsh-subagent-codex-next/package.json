@@ -1,7 +1,7 @@
 {
   "name": "dsh-subagent-codex-next",
-  "description": "One-shot Codex subagent provider for DeepSeek Harness — fork with a modern Codex payload, configurable executable, and a self-contained profile layer",
-  "version": "0.2.2-rc.1-dsh.1",
+  "description": "Fork of @deepseek-ai/dsh-subagent-codex for DeepSeek Harness 0.2.2-rc.5: modern Codex payload (gpt-6.x), configurable executable, probe tooling",
+  "version": "0.2.2-rc.5-dsh.1",
   "publishConfig": {
     "access": "public"
   },
@@ -37,20 +37,20 @@
     }
   },
   "engines": {
-    "dsh": ">=0.2.2-rc.1 <0.2.3-0"
+    "dsh": ">=0.2.2-rc.5 <0.2.3-0"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "~4.1.0",
-    "@deepseek-ai/dsh-llm": ">=0.2.2-rc.1 <0.2.3-0",
-    "@deepseek-ai/dsh-session": ">=0.2.2-rc.1 <0.2.3-0",
-    "@deepseek-ai/dsh-subagent": ">=0.2.2-rc.1 <0.2.3-0",
-    "@deepseek-ai/dsh-subprocess": ">=0.2.2-rc.1 <0.2.3-0",
-    "@deepseek-ai/dsh-timeout": ">=0.2.2-rc.1 <0.2.3-0"
+    "@deepseek-ai/dsh-llm": "0.2.2-rc.5",
+    "@deepseek-ai/dsh-session": "0.2.2-rc.5",
+    "@deepseek-ai/dsh-subagent": "0.2.2-rc.5",
+    "@deepseek-ai/dsh-subprocess": "0.2.2-rc.5",
+    "@deepseek-ai/dsh-timeout": "0.2.2-rc.5"
   },
   "dependencies": {
-    "@deepseek-ai/dsh-brand": "0.2.2-rc.1",
-    "@deepseek-ai/dsh-sdk-protocol": "0.2.2-rc.1",
-    "@deepseek-ai/dsh-tool-subagent": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-brand": "0.2.2-rc.5",
+    "@deepseek-ai/dsh-sdk-protocol": "0.2.2-rc.5",
+    "@deepseek-ai/dsh-tool-subagent": "0.2.2-rc.5",
     "@deepseek-ai/schemastery": "~3.19.0",
     "@openai/codex": "0.166.0"
   },

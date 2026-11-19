@@ -43,7 +43,7 @@ subagent_codex / subagent_codex_luna / subagent_codex_terra
 | npm-тег `latest` плагина (`0.0.1-rc.1`) старее установленной; `next` = `0.2.2-rc.5` — **не** содержит bump | ресёрч, §1 |
 | `pnpm overrides` в `pnpm-workspace.yaml` принудительно ставит плагину `0.166.0` | override-проверка на копии профиля; резолвинг из плагина → `codex-cli 0.166.0` |
 | `pnpm.overrides` в `package.json` **не работает** (pnpm 11 игнорирует поле) | override-проверка, вариант B |
-| Хост: установлен DSH 0.2.2-rc.1; апдейтер-фид уже предлагает 0.2.2-rc.5, но код и Codex-pin там те же | ресёрч, §3 |
+| Хост обновлён с DSH 0.2.2-rc.1 до **0.2.2-rc.5** (2026-11-19); upstream-плагин 0.2.2-rc.1 стал `incompatible-version`, все опубликованные версии плагина по-прежнему пинят Codex 0.153.4 | `research/versions-after-dsh-update.json`, `plugin_manager list_bundles` |
 
 **Вывод:** сломан не wire и не аккаунт, а устаревший Codex-payload в
 зависимости плагина. Достаточно поднять payload до `0.166.0`; правки
@@ -195,7 +195,7 @@ npm pack --pack-destination .artifacts
 ```
 
 Далее — `plugin_manager install_bundle` с target
-`file:D:\Repos\DSH\plugins\subagents\packages\dsh-subagent-codex-next\.artifacts\dsh-subagent-codex-next-0.2.2-rc.1-dsh.1.tgz`,
+`file:D:\Repos\DSH\plugins\subagents\packages\dsh-subagent-codex-next\.artifacts\dsh-subagent-codex-next-0.2.2-rc.5-dsh.1.tgz`,
 `enabled: true` (можно попросить агента в этой сессии; операция требует
 danger-full-access/approval). После установки:
 
@@ -222,11 +222,12 @@ danger-full-access/approval). После установки:
       cancel/interrupt, `--no-turn` во всех трёх permission-mode; зафиксировать
       ожидаемые результаты.
 - [ ] **Пин-файл**: `package.json` + `npm run probe` в pre-release чеклисте.
-- [ ] **Публикация/распространение**: свой npm-scope (например
-      `@kubatov/dsh-subagent-codex-next`) или GitHub-релиз tarball; при
-      публикации — README + LICENSE + `files` уже готовы.
-- [ ] **Peer-политика**: сейчас диапазоны `>=0.2.2-rc.1 <0.2.3-0`; при обновлении
-      хоста до rc.5 форк остаётся совместимым по диапазону, но нужен прогон.
+- [x] **Публикация/распространение**: GitHub-релиз tarball;
+      артефакт `v0.2.2-rc.5-dsh.1` для хоста 0.2.2-rc.5 (старый
+      `v0.2.2-rc.1-dsh.1` сохранён для хоста 0.2.2-rc.1).
+- [x] **Peer-политика**: артефакт привязан к версии хоста (deps/peers exact
+      `0.2.2-rc.5`, `engines.dsh: >=0.2.2-rc.5 <0.2.3-0`); при следующем
+      обновлении хоста нужен новый релиз форка с версией этого хоста.
 
 ---
 
@@ -318,14 +319,16 @@ danger-full-access/approval). После установки:
 ## 11. Публикация
 
 Репозиторий опубликован публично: <https://github.com/dkubatov/dsh-subagents-plugin>.
-Релиз с готовым tarball'ом:
-<https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.1-dsh.1>
-(asset `dsh-subagent-codex-next-0.2.2-rc.1-dsh.1.tgz` + `SHA256SUMS.txt`).
+Актуальный релиз (хост 0.2.2-rc.5):
+<https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.5-dsh.1>
+(asset `dsh-subagent-codex-next-0.2.2-rc.5-dsh.1.tgz` + `SHA256SUMS.txt`).
+Предыдущий релиз для хоста 0.2.2-rc.1:
+<https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.1-dsh.1>.
 
 Установка прямо из релиза (`plugin_manager install_bundle`):
 
 ```json
-{"action":"install_bundle","target":"https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.1-dsh.1/dsh-subagent-codex-next-0.2.2-rc.1-dsh.1.tgz","enabled":true}
+{"action":"install_bundle","target":"https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.1/dsh-subagent-codex-next-0.2.2-rc.5-dsh.1.tgz","enabled":true}
 ```
 
 Локальный репозиторий — корень этого рабочего пространства (`main`), remote
@@ -334,6 +337,6 @@ danger-full-access/approval). После установки:
 ```powershell
 cd packages/dsh-subagent-codex-next
 npm pack --pack-destination .artifacts
-# затем: commit + push; gh release upload v0.2.2-rc.1-dsh.1 .artifacts\*.tgz --clobber
+# затем: commit + push; gh release upload v0.2.2-rc.5-dsh.1 .artifacts\*.tgz --clobber
 ```
 
