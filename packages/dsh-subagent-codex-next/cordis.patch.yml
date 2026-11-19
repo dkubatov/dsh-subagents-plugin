@@ -1,12 +1,9 @@
-# Fork profile layer: mounts the fork's provider and one global delegation tool.
-# Installed as a separate bundle, this layer does not collide with the upstream
-# bundle because its row ids carry the `-next` suffix.
+# Fork profile layer: registers the Codex provider as a Host row.
+#
+# DSH 0.2.2-rc.5 moved delegation tools into Agent Presets: the web bundle
+# disables Host-root `tool-subagent` rows, so a Host-only tool row would stay
+# inert. Mount the delegation tools inside the preset you use (see
+# `preset/standard-codex.patch.yml` and the package README).
 - insert:
     - id: subagent-codex-next
       name: 'dsh-subagent-codex-next'
-    - id: tool-subagent-codex-next
-      name: '@deepseek-ai/dsh-tool-subagent'
-      config:
-        provider: codex
-        toolName: subagent_codex
-        maxDepth: provider-managed

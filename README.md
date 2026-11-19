@@ -84,6 +84,7 @@ npm pack --pack-destination .artifacts
 | Путь | Что внутри |
 |---|---|
 | [PLAN.md](PLAN.md) | План внедрения: варианты (override/форк/апстрим), фазы, тест-матрица, риски, откат |
+| [COMPATIBILITY.md](COMPATIBILITY.md) | Что и на каких версиях DSH/Codex реально проверено (и что ещё нет) |
 | [packages/dsh-subagent-codex-next/](packages/dsh-subagent-codex-next/README.md) | Форк-пакет: код, конфигурация, установка/откат, probe |
 | [spikes/protocol/REPORT.md](spikes/protocol/REPORT.md) | Спайк: wire-совместимость с Codex 0.166/0.169, матрица моделей, JSON-schema-дифф протокола |
 | [research/upstream-report.md](research/upstream-report.md) | Апстрим-ресёрч: версии плагина/Codex, diffs, рекомендация по пину |

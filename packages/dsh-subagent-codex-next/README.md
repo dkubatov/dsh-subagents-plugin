@@ -105,6 +105,15 @@ Wire-код (JSON-RPC, выбор ответа, approval-ответы, teardown)
 
 ## Установка в профиль DSH
 
+> **DSH 0.2.2-rc.5: инструменты — preset-scoped.** В rc.5 web-bundle выключает
+> Host-строки `@deepseek-ai/dsh-tool-subagent`, а инструменты делегирования
+> живут внутри Agent Preset. Поэтому bundle-патч форка регистрирует только
+> provider (Host), а строки `tool-subagent` нужно добавить в используемый
+> preset (например, override shipped-пресета `standard` в
+> `cordis.patch.yml` профиля). Host-строка `tool-subagent-codex-next`
+> останется `enabled: false` — это ожидаемо, не ошибка.
+> Подробности и матрица проверок: `COMPATIBILITY.md`.
+
 Профиль: `C:\Users\<you>\.dsh\profiles\desktop`. Форк ставится как **отдельный
 bundle**, рядом с upstream (не поверх него).
 

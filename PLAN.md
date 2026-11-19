@@ -5,6 +5,14 @@
 [апстрим-ресёрч](research/upstream-report.md), [override-проверка](research/override/REPORT.md),
 [форк](packages/dsh-subagent-codex-next/README.md).
 
+> **Обновление 2026-11-19 (после начала внедрения):** хост обновлён до DSH
+> `0.2.2-rc.5`; форк `0.2.2-rc.5-dsh.2` установлен в живой профиль
+> (`application: applied`), upstream-bundle выключен. На rc.5 инструменты
+> делегирования стали preset-scoped (Host-строки `tool-subagent*` web-bundle
+> выключает), поэтому в профиле добавлен override shipped-пресета `standard`.
+> Live e2e ожидает новой Session. Подробности и матрица —
+> [COMPATIBILITY.md](COMPATIBILITY.md).
+
 ---
 
 ## 1. Диагноз (подтверждено эмпирически)
