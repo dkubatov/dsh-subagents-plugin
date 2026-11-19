@@ -23,7 +23,9 @@ const archive = archiveFlag >= 0
       'app.asar',
     )
 
-const args = rawArgs.filter((_, index) => index !== archiveFlag && index !== archiveFlag + 1)
+const args = archiveFlag >= 0
+  ? rawArgs.filter((_, index) => index !== archiveFlag && index !== archiveFlag + 1)
+  : rawArgs
 const outRoot = args[0]
 const files = args.slice(1)
 

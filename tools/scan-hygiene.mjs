@@ -17,8 +17,10 @@ import { fileURLToPath } from 'node:url'
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)))
 const SELF = fileURLToPath(import.meta.url)
-const TEXT_EXT = /\.(md|markdown|json|jsonl|mjs|js|ts|yml|yaml|txt|toml|ps1|cmd|sh|svg)$/i
 const MAX_BYTES = 2 * 1024 * 1024
+// Binary formats are skipped; every other tracked file (including `.env`,
+// extensionless configs, and dotfiles) is scanned as text.
+const BINARY_EXT = /\.(png|jpe?g|gif|webp|ico|bmp|tiff?|pdf|zip|gz|tgz|tar|rar|7z|exe|dll|node|wasm|woff2?|ttf|otf|eot|mp[34]|webm|ogg|wav|db|sqlite|asar)$/i
 
 function variants(value) {
   if (!value || value.length < 6) return []
@@ -62,14 +64,18 @@ function trackedFiles() {
 const findings = []
 for (const relative of trackedFiles()) {
   if (relative === 'tools/scan-hygiene.mjs') continue
+  if (BINARY_EXT.test(relative)) continue
   const absolute = join(ROOT, relative)
-  if (!TEXT_EXT.test(relative)) continue
+  let buffer
   try {
     if (statSync(absolute).size > MAX_BYTES) continue
+    buffer = readFileSync(absolute)
   } catch {
     continue
   }
-  const lines = readFileSync(absolute, 'utf8').split('\n')
+  // A NUL byte in the head means binary content even without a binary extension.
+  if (buffer.subarray(0, 4096).includes(0)) continue
+  const lines = buffer.toString('utf8').split('\n')
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index]
     for (const needle of needles) {
