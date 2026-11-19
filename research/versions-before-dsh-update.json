@@ -1,0 +1,59 @@
+{
+  "label": "before-dsh-update",
+  "collectedAt": "2026-11-19T08:16:13.869Z",
+  "host": {
+    "desktopAppVersion": "44.7.0",
+    "desktopRuntime": {
+      "name": "@deepseek-ai/dsh-desktop-runtime",
+      "version": "0.2.2-rc.1"
+    },
+    "runtimeToolchain": {
+      "schemaVersion": 1,
+      "node": "24.21.0",
+      "pnpm": "11.28.5"
+    }
+  },
+  "profile": {
+    "path": "C:\\Users\\kubat\\.dsh\\profiles\\desktop",
+    "bundles": [
+      "@deepseek-ai/dsh-base",
+      "@deepseek-ai/dsh-web-app",
+      "@deepseek-ai/dsh-experimental-inspector-profile",
+      "@deepseek-ai/dsh-experimental-agent-team-profile",
+      "@deepseek-ai/dsh-experimental-voice-input-bundle",
+      "@deepseek-ai/dsh-experimental-forge-bundle",
+      "@deepseek-ai/dsh-experimental-auto-review",
+      "@deepseek-ai/dsh-experimental-plugin-market-bundle",
+      "dsh-codex-subscription",
+      "@deepseek-ai/dsh-subagent-codex"
+    ],
+    "dependencies": {
+      "@deepseek-ai/dsh-subagent-codex": "0.2.2-rc.1",
+      "dsh-codex-subscription": "^3.2.14",
+      "dsh-codex-subtask-cli": "npm:@openai/codex@0.166.0"
+    }
+  },
+  "upstreamPlugin": {
+    "installedVersion": "0.2.2-rc.1",
+    "pinnedCodex": "0.153.4",
+    "installedCodex": {
+      "name": "@openai/codex",
+      "version": "0.153.4"
+    },
+    "codexCliVersion": "codex-cli 0.153.4"
+  },
+  "appCodex": {
+    "path": "C:\\Users\\kubat\\AppData\\Local\\OpenAI\\Codex\\bin\\22fc0d1de88fa0c1\\codex.exe",
+    "version": "codex-cli 0.169.0-alpha.11.1"
+  },
+  "fork": {
+    "name": "dsh-subagent-codex-next",
+    "version": "0.2.2-rc.1-dsh.1",
+    "pinnedCodex": "0.166.0",
+    "enginesDsh": ">=0.2.2-rc.1 <0.2.3-0"
+  },
+  "environment": {
+    "node": "v24.19.0",
+    "platform": "win32-x64"
+  }
+}
