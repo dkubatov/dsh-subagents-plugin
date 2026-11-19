@@ -195,7 +195,7 @@ npm pack --pack-destination .artifacts
 ```
 
 Далее — `plugin_manager install_bundle` с target
-`file:D:\Repos\DSH\plugins\subagents\packages\dsh-subagent-codex-next\.artifacts\dsh-subagent-codex-next-0.2.2-rc.5-dsh.1.tgz`,
+`file:D:\Repos\DSH\plugins\subagents\packages\dsh-subagent-codex-next\.artifacts\dsh-subagent-codex-next-0.2.2-rc.5-dsh.2.tgz`,
 `enabled: true` (можно попросить агента в этой сессии; операция требует
 danger-full-access/approval). После установки:
 
@@ -223,7 +223,7 @@ danger-full-access/approval). После установки:
       ожидаемые результаты.
 - [ ] **Пин-файл**: `package.json` + `npm run probe` в pre-release чеклисте.
 - [x] **Публикация/распространение**: GitHub-релиз tarball;
-      артефакт `v0.2.2-rc.5-dsh.1` для хоста 0.2.2-rc.5 (старый
+      артефакт `v0.2.2-rc.5-dsh.2` для хоста 0.2.2-rc.5 (старый
       `v0.2.2-rc.1-dsh.1` сохранён для хоста 0.2.2-rc.1).
 - [x] **Peer-политика**: артефакт привязан к версии хоста (deps/peers exact
       `0.2.2-rc.5`, `engines.dsh: >=0.2.2-rc.5 <0.2.3-0`); при следующем
@@ -320,15 +320,15 @@ danger-full-access/approval). После установки:
 
 Репозиторий опубликован публично: <https://github.com/dkubatov/dsh-subagents-plugin>.
 Актуальный релиз (хост 0.2.2-rc.5):
-<https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.5-dsh.1>
-(asset `dsh-subagent-codex-next-0.2.2-rc.5-dsh.1.tgz` + `SHA256SUMS.txt`).
+<https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.5-dsh.2>
+(asset `dsh-subagent-codex-next-0.2.2-rc.5-dsh.2.tgz` + `SHA256SUMS.txt`).
 Предыдущий релиз для хоста 0.2.2-rc.1:
 <https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.1-dsh.1>.
 
 Установка прямо из релиза (`plugin_manager install_bundle`):
 
 ```json
-{"action":"install_bundle","target":"https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.1/dsh-subagent-codex-next-0.2.2-rc.5-dsh.1.tgz","enabled":true}
+{"action":"install_bundle","target":"https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.2/dsh-subagent-codex-next-0.2.2-rc.5-dsh.2.tgz","enabled":true}
 ```
 
 Локальный репозиторий — корень этого рабочего пространства (`main`), remote
@@ -337,6 +337,6 @@ danger-full-access/approval). После установки:
 ```powershell
 cd packages/dsh-subagent-codex-next
 npm pack --pack-destination .artifacts
-# затем: commit + push; gh release upload v0.2.2-rc.5-dsh.1 .artifacts\*.tgz --clobber
+# затем: commit + push; gh release upload v0.2.2-rc.5-dsh.2 .artifacts\*.tgz --clobber
 ```
 

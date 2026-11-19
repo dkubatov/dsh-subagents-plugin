@@ -108,19 +108,19 @@ Wire-код (JSON-RPC, выбор ответа, approval-ответы, teardown)
 Профиль: `C:\Users\<you>\.dsh\profiles\desktop`. Форк ставится как **отдельный
 bundle**, рядом с upstream (не поверх него).
 
-> **Версия хоста.** Артефакт `0.2.2-rc.5-dsh.1` привязан к DSH **0.2.2-rc.5**
+> **Версия хоста.** Артефакт `0.2.2-rc.5-dsh.2` привязан к DSH **0.2.2-rc.5**
 > (deps/peers exact). Для DSH `0.2.2-rc.1` остаётся предыдущий релиз
 > [`v0.2.2-rc.1-dsh.1`](https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.1-dsh.1).
 
 
 ### 0. Готовый tarball из GitHub Release (рекомендуется)
 
-Релиз: <https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.5-dsh.1>
+Релиз: <https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.5-dsh.2>
 
 ```json
 {
   "action": "install_bundle",
-  "target": "https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.1/dsh-subagent-codex-next-0.2.2-rc.5-dsh.1.tgz",
+  "target": "https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.2/dsh-subagent-codex-next-0.2.2-rc.5-dsh.2.tgz",
   "enabled": true
 }
 ```
@@ -133,13 +133,13 @@ bundle**, рядом с upstream (не поверх него).
 ```powershell
 cd D:\Repos\DSH\plugins\subagents\packages\dsh-subagent-codex-next
 npm pack --pack-destination .artifacts
-# .artifacts\dsh-subagent-codex-next-0.2.2-rc.5-dsh.1.tgz
+# .artifacts\dsh-subagent-codex-next-0.2.2-rc.5-dsh.2.tgz
 ```
 
 ### 2. Установить локальный tarball через `plugin_manager`
 
 ```json
-{"action":"install_bundle","target":"file:D:\\Repos\\DSH\\plugins\\subagents\\packages\\dsh-subagent-codex-next\\.artifacts\\dsh-subagent-codex-next-0.2.2-rc.5-dsh.1.tgz","enabled":true}
+{"action":"install_bundle","target":"file:D:\\Repos\\DSH\\plugins\\subagents\\packages\\dsh-subagent-codex-next\\.artifacts\\dsh-subagent-codex-next-0.2.2-rc.5-dsh.2.tgz","enabled":true}
 ```
 
 `install_bundle` принимает `file:`-спеки (см. README `dsh-plugin-manager`:

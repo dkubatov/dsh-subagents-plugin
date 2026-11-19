@@ -899,6 +899,8 @@ var CodexProvider = class {
 * @param config - registry name, optional model, permission mode, child environment, and disposal grace.
 */
 function apply(ctx, config) {
+	const command = config.command !== void 0 && config.command.length > 0 ? config.command : void 0;
+	const codexBin = config.codexBin !== void 0 && config.codexBin.length > 0 ? config.codexBin : void 0;
 	const resolved = {
 		providerName: config.providerName ?? DEFAULT_PROVIDER_NAME,
 		...config.model === void 0 ? {} : { model: config.model },
@@ -906,11 +908,10 @@ function apply(ctx, config) {
 		permissionMode: config.permissionMode ?? "never",
 		disposeGraceMs: config.disposeGraceMs,
 		codexPackage: config.codexPackage ?? DEFAULT_CODEX_PACKAGE,
-		...config.codexBin === void 0 ? {} : { codexBin: config.codexBin },
-		...config.command === void 0 ? {} : { command: config.command }
+		...codexBin === void 0 ? {} : { codexBin },
+		...command === void 0 ? {} : { command }
 	};
 	if (resolved.codexBin !== void 0 && resolved.command !== void 0) throw new Error("subagent-codex-next: configure either codexBin or command, not both");
-	if (resolved.command !== void 0 && resolved.command.length === 0) throw new Error("subagent-codex-next: command must contain at least one argv entry");
 	assertPositiveFinite("subagent-codex", "disposeGraceMs", resolved.disposeGraceMs);
 	if (resolved.disposeGraceMs > MAX_TIMER_DELAY_MS) throw new Error(`subagent-codex: disposeGraceMs must be no greater than ${MAX_TIMER_DELAY_MS}`);
 	ctx.subagents.registerProvider(new CodexProvider(resolved.providerName, ctx, resolved));

@@ -126,6 +126,12 @@ class CodexProvider implements SubagentProvider {
  * @param config - registry name, optional model, permission mode, child environment, and disposal grace.
  */
 export function apply(ctx: Context, config: Config): void {
+  const command = config.command !== undefined && config.command.length > 0
+    ? config.command
+    : undefined
+  const codexBin = config.codexBin !== undefined && config.codexBin.length > 0
+    ? config.codexBin
+    : undefined
   const resolved: ResolvedConfig = {
     providerName: config.providerName ?? DEFAULT_PROVIDER_NAME,
     ...config.model === undefined ? {} : { model: config.model },
@@ -133,14 +139,11 @@ export function apply(ctx: Context, config: Config): void {
     permissionMode: config.permissionMode ?? DEFAULT_CODEX_PERMISSION_MODE,
     disposeGraceMs: config.disposeGraceMs as number,
     codexPackage: config.codexPackage ?? DEFAULT_CODEX_PACKAGE,
-    ...config.codexBin === undefined ? {} : { codexBin: config.codexBin },
-    ...config.command === undefined ? {} : { command: config.command },
+    ...codexBin === undefined ? {} : { codexBin },
+    ...command === undefined ? {} : { command },
   }
   if (resolved.codexBin !== undefined && resolved.command !== undefined) {
     throw new Error('subagent-codex-next: configure either codexBin or command, not both')
-  }
-  if (resolved.command !== undefined && resolved.command.length === 0) {
-    throw new Error('subagent-codex-next: command must contain at least one argv entry')
   }
   assertPositiveFinite(
     'subagent-codex',
