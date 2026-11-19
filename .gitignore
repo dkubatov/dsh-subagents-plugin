@@ -29,3 +29,7 @@ tmp/
 
 # Machine-local backups (not published)
 local-backups/
+
+# Local scratch files
+.tmp-*
+
