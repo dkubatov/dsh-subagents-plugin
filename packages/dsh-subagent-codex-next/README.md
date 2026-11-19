@@ -100,10 +100,11 @@ Wire-код (JSON-RPC, выбор ответа, approval-ответы, teardown)
 ```
 
 После старта треда плагин сверяет `model` / `reasoningEffort` из ответа
-app-server с конфигурацией: при несовпадении запуск падает с явной ошибкой
-`Codex started thread with reasoning effort "…" but "…" was configured`.
-Наблюдаемые `model` / `modelProvider` / `reasoningEffort` пишутся в лог
-провайдера строкой `thread ready (model=…, provider=…, reasoningEffort=…)`.
+app-server с конфигурацией и пишет в лог провайдера строку
+`thread ready (model=…, provider=…, reasoningEffort=…)`; при расхождении —
+предупреждение `thread started with unexpected configuration (…)`.
+Поведение JSON-RPC-адаптера при этом не меняется: конфигурация и диагностика —
+да, acceptance-логика upstream остаётся как есть.
 
 > Эхо `thread/start` подтверждает, что сервер принял запрошенное значение, но
 > **не** проверяет, что модель его реально поддерживает: Codex возвращает даже

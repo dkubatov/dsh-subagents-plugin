@@ -192,14 +192,6 @@ export interface CodexStartedFacts {
   readonly reasoningEffort?: string
 }
 
-/** A configured model/effort did not match the app-server's reported thread. */
-export class CodexConfigVerificationError extends Error {
-  constructor(message: string) {
-    super(message)
-    this.name = 'CodexConfigVerificationError'
-  }
-}
-
 /**
  * One app-server connection and its single ephemeral thread/turn.
  *
@@ -323,16 +315,6 @@ export class CodexAppServerWire {
       model: typeof response.model === 'string' ? response.model : undefined,
       modelProvider: typeof response.modelProvider === 'string' ? response.modelProvider : undefined,
       reasoningEffort: typeof response.reasoningEffort === 'string' ? response.reasoningEffort : undefined,
-    }
-    if (this.model !== undefined && observed.model !== undefined && observed.model !== this.model) {
-      throw new CodexConfigVerificationError(
-        `subagent-codex-next: Codex started model "${observed.model}" but "${this.model}" was configured`,
-      )
-    }
-    if (this.reasoningEffort !== undefined && observed.reasoningEffort !== this.reasoningEffort) {
-      throw new CodexConfigVerificationError(
-        `subagent-codex-next: Codex started thread with reasoning effort "${String(observed.reasoningEffort)}" but "${this.reasoningEffort}" was configured`,
-      )
     }
     this.threadId = id
     return observed

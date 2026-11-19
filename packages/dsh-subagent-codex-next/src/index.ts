@@ -124,9 +124,25 @@ class CodexProvider implements SubagentProvider {
         )
       },
       onStarted: facts => {
-        this.ctx.logger.info(
-          `subagent-codex "${this.name}": thread ready (model=${facts.model ?? 'native'}, provider=${facts.modelProvider ?? 'unknown'}, reasoningEffort=${facts.reasoningEffort ?? 'native'})`,
-        )
+        const expectedModel = this.config.model
+        const expectedEffort = this.config.reasoningEffort
+        const mismatches: string[] = []
+        if (expectedModel !== undefined && facts.model !== expectedModel) {
+          mismatches.push(`model "${facts.model ?? 'unknown'}" != "${expectedModel}"`)
+        }
+        if (expectedEffort !== undefined && facts.reasoningEffort !== expectedEffort) {
+          mismatches.push(`reasoningEffort "${facts.reasoningEffort ?? 'unknown'}" != "${expectedEffort}"`)
+        }
+        const detail = `model=${facts.model ?? 'native'}, provider=${facts.modelProvider ?? 'unknown'}, reasoningEffort=${facts.reasoningEffort ?? 'native'}`
+        if (mismatches.length > 0) {
+          this.ctx.logger.warn(
+            `subagent-codex "${this.name}": thread started with unexpected configuration (${mismatches.join('; ')}; reported ${detail})`,
+          )
+        } else {
+          this.ctx.logger.info(
+            `subagent-codex "${this.name}": thread ready (${detail})`,
+          )
+        }
       },
     }
     return startCodexRun(request, spec)

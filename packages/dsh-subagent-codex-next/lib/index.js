@@ -228,12 +228,6 @@ var CodexAppServerWire = class {
 			modelProvider: typeof response.modelProvider === "string" ? response.modelProvider : void 0,
 			reasoningEffort: typeof response.reasoningEffort === "string" ? response.reasoningEffort : void 0
 		};
-		if (this.model !== void 0 && observed.model !== void 0 && observed.model !== this.model) {
-			throw new CodexConfigVerificationError(`subagent-codex-next: Codex started model "${observed.model}" but "${this.model}" was configured`);
-		}
-		if (this.reasoningEffort !== void 0 && observed.reasoningEffort !== this.reasoningEffort) {
-			throw new CodexConfigVerificationError(`subagent-codex-next: Codex started thread with reasoning effort "${String(observed.reasoningEffort)}" but "${this.reasoningEffort}" was configured`);
-		}
 		this.threadId = id;
 		return observed;
 	}
@@ -593,12 +587,6 @@ var CodexRunFailure = class extends Error {
 		this.name = "CodexRunFailure";
 	}
 };
-var CodexConfigVerificationError = class extends Error {
-	constructor(message) {
-		super(message);
-		this.name = "CodexConfigVerificationError";
-	}
-};
 /**
 * Hide an unpublished Host failure behind fixed safe startup facts.
 * @param cause Original Host failure retained for internal diagnostics.
@@ -784,7 +772,6 @@ async function startCodexRun(request, spec) {
 			const cleanupFailure = thrown(disposeError);
 			throw new AggregateError([failure, cleanupFailure], `${failure.message}; ${cleanupFailure.message}`);
 		}
-		if (error instanceof CodexConfigVerificationError) throw error;
 		if (cancelledBeforeCleanup) throw new Error("subagent-codex: request was aborted before run publication");
 		try {
 			request.signal.throwIfAborted();
@@ -917,7 +904,14 @@ var CodexProvider = class {
 				this.ctx.logger.warn(`subagent-codex "${this.name}": child run failed (${stopReason}): ${error.message}`);
 			},
 			onStarted: (facts) => {
-				this.ctx.logger.info(`subagent-codex "${this.name}": thread ready (model=${facts.model ?? "native"}, provider=${facts.modelProvider ?? "unknown"}, reasoningEffort=${facts.reasoningEffort ?? "native"})`);
+				const expectedModel = this.config.model;
+				const expectedEffort = this.config.reasoningEffort;
+				const mismatches = [];
+				if (expectedModel !== void 0 && facts.model !== expectedModel) mismatches.push(`model "${facts.model ?? "unknown"}" != "${expectedModel}"`);
+				if (expectedEffort !== void 0 && facts.reasoningEffort !== expectedEffort) mismatches.push(`reasoningEffort "${facts.reasoningEffort ?? "unknown"}" != "${expectedEffort}"`);
+				const detail = `model=${facts.model ?? "native"}, provider=${facts.modelProvider ?? "unknown"}, reasoningEffort=${facts.reasoningEffort ?? "native"}`;
+				if (mismatches.length > 0) this.ctx.logger.warn(`subagent-codex "${this.name}": thread started with unexpected configuration (${mismatches.join("; ")}; reported ${detail})`);
+				else this.ctx.logger.info(`subagent-codex "${this.name}": thread ready (${detail})`);
 			}
 		});
 	}

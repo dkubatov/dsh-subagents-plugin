@@ -13,6 +13,11 @@
 > (а не preset-scoped архитектура): после его удаления Host-строки инструментов
 > активировались. Детали — [COMPATIBILITY.md](COMPATIBILITY.md),
 > [research/live-e2e-2026-11-19.md](research/live-e2e-2026-11-19.md).
+>
+> **Текущая ветка `feat/reasoning-effort`:** готовится артефакт
+> `0.2.2-rc.5-dsh.4` с настраиваемым `reasoningEffort` (low…ultra). Live-прогон
+> выше относится к dsh.3 и остаётся историей; релиз dsh.4 — после merge и
+> положительного независимого ревью.
 
 ---
 
@@ -192,8 +197,8 @@ Copy-Item cordis.patch.yml.bak-before-gpt6      cordis.patch.yml -Force
 ### 4.1. Что уже готово
 
 `packages/dsh-subagent-codex-next/` — MVP форка: `@openai/codex@0.166.0`,
-опции `codexPackage`/`codexBin`/`command`, свой bundle-слой с id `-next`,
-probe-скрипт, README с установкой/откатом. `lib/index.js` собран из upstream rc.5
+опции `codexPackage`/`codexBin`/`command`/`reasoningEffort`, свой bundle-слой с
+id `-next`, probe-скрипты, README с установкой/откатом. `lib/index.js` собран из
 с минимальными правками (см. diff-описание в README форка); `src/` приложен.
 
 ### 4.2. Установка
@@ -204,7 +209,7 @@ npm pack --pack-destination .artifacts
 ```
 
 Далее — `plugin_manager install_bundle` с target
-`file:D:\Repos\DSH\plugins\subagents\packages\dsh-subagent-codex-next\.artifacts\dsh-subagent-codex-next-0.2.2-rc.5-dsh.3.tgz`,
+`file:<workspace>\packages\dsh-subagent-codex-next\.artifacts\dsh-subagent-codex-next-0.2.2-rc.5-dsh.4.tgz`,
 `enabled: true` (можно попросить агента в этой сессии; операция требует
 danger-full-access/approval). После установки:
 
@@ -231,9 +236,11 @@ danger-full-access/approval). После установки:
       cancel/interrupt, `--no-turn` во всех трёх permission-mode; зафиксировать
       ожидаемые результаты.
 - [ ] **Пин-файл**: `package.json` + `npm run probe` в pre-release чеклисте.
-- [x] **Публикация/распространение**: GitHub-релиз tarball;
-      артефакт `v0.2.2-rc.5-dsh.3` для хоста 0.2.2-rc.5 (старый
-      `v0.2.2-rc.1-dsh.1` сохранён для хоста 0.2.2-rc.1).
+- [x] **Публикация/распространение**: GitHub-релиз tarball; опубликованный
+      артефакт `v0.2.2-rc.5-dsh.3` (на нём выполнен исторический live-прогон);
+      артефакт `v0.2.2-rc.5-dsh.4` подготовлен в ветке `feat/reasoning-effort`
+      и публикуется после merge и ревью. Старый `v0.2.2-rc.1-dsh.1` сохранён
+      для хоста 0.2.2-rc.1.
 - [x] **Peer-политика**: артефакт привязан к версии хоста (deps/peers exact
       `0.2.2-rc.5`, `engines.dsh: >=0.2.2-rc.5 <0.2.3-0`); при следующем
       обновлении хоста нужен новый релиз форка с версией этого хоста.
@@ -328,13 +335,23 @@ danger-full-access/approval). После установки:
 ## 11. Публикация
 
 Репозиторий опубликован публично: <https://github.com/dkubatov/dsh-subagents-plugin>.
-Актуальный релиз (хост 0.2.2-rc.5):
+
+Опубликованный релиз для хоста 0.2.2-rc.5 (исторический live-прогон):
 <https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.5-dsh.3>
 (asset `dsh-subagent-codex-next-0.2.2-rc.5-dsh.3.tgz` + `SHA256SUMS.txt`).
 Предыдущий релиз для хоста 0.2.2-rc.1:
 <https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.1-dsh.1>.
 
-Установка прямо из релиза (`plugin_manager install_bundle`):
+Готовящийся релиз текущей ветки (после merge и положительного ревью):
+`v0.2.2-rc.5-dsh.4`.
+
+Установка dsh.4 **после публикации** (`plugin_manager install_bundle`):
+
+```json
+{"action":"install_bundle","target":"https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.4/dsh-subagent-codex-next-0.2.2-rc.5-dsh.4.tgz","enabled":true}
+```
+
+Актуальный опубликованный dsh.3 (без `reasoningEffort`):
 
 ```json
 {"action":"install_bundle","target":"https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.3/dsh-subagent-codex-next-0.2.2-rc.5-dsh.3.tgz","enabled":true}
@@ -346,6 +363,6 @@ danger-full-access/approval). После установки:
 ```powershell
 cd packages/dsh-subagent-codex-next
 npm pack --pack-destination .artifacts
-# затем: commit + push; gh release upload v0.2.2-rc.5-dsh.3 .artifacts\*.tgz --clobber
+# затем: commit + push; gh release upload v0.2.2-rc.5-dsh.4 .artifacts\*.tgz --clobber
 ```
 

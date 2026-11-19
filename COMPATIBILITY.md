@@ -43,10 +43,11 @@ ranges) — это диапазон, а не доказательство; до�
 ## Reasoning effort (`0.2.2-rc.5-dsh.4`)
 
 Новая опция экземпляра провайдера `reasoningEffort` передаётся в
-`thread/start` как `config.model_reasoning_effort` и сверяется с полями
-`model` / `reasoningEffort` из ответа app-server; при несовпадении запуск
-падает с явной ошибкой (а не молчаливой подменой). Наблюдаемые значения
-пишутся в лог: `thread ready (model=…, provider=…, reasoningEffort=…)`.
+`thread/start` как `config.model_reasoning_effort`; `model` / `modelProvider` /
+`reasoningEffort` из ответа app-server пишутся в лог
+(`thread ready (…)`), а при расхождении с конфигурацией — warning
+`thread started with unexpected configuration (…)`. Это только диагностика:
+acceptance-логика JSON-RPC-адаптера не меняется (инвариант AGENTS §2).
 
 Каталог `model/list` (`@openai/codex@0.166.0`, ChatGPT-аккаунт, снят 2026-11-19):
 

@@ -29,7 +29,6 @@ import type {
 } from '@deepseek-ai/dsh-subprocess'
 import {
   CodexAppServerWire,
-  CodexConfigVerificationError,
   type CodexStartedFacts,
   type CodexWireFailureFacts,
 } from './wire.ts'
@@ -404,7 +403,6 @@ export async function startCodexRun(
         `${failure.message}; ${cleanupFailure.message}`,
       )
     }
-    if (error instanceof CodexConfigVerificationError) throw error
     if (cancelledBeforeCleanup) {
       throw new Error('subagent-codex: request was aborted before run publication')
     }
