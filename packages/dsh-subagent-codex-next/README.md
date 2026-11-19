@@ -105,70 +105,100 @@ Wire-код (JSON-RPC, выбор ответа, approval-ответы, teardown)
 
 ## Установка в профиль DSH
 
-> **DSH 0.2.2-rc.5: инструменты — preset-scoped.** В rc.5 web-bundle выключает
-> Host-строки `@deepseek-ai/dsh-tool-subagent`, а инструменты делегирования
-> живут внутри Agent Preset. Поэтому bundle-патч форка регистрирует только
-> provider (Host), а строки `tool-subagent` нужно добавить в используемый
-> preset (например, override shipped-пресета `standard` в
-> `cordis.patch.yml` профиля). Host-строка `tool-subagent-codex-next`
-> останется `enabled: false` — это ожидаемо, не ошибка.
-> Подробности и матрица проверок: `COMPATIBILITY.md`.
+> **DSH 0.2.2-rc.5: важное предусловие.** В профиле не должно
+> оставаться старого upstream-плагина
+> `@deepseek-ai/dsh-subagent-codex@0.2.2-rc.1`: после обновления хоста он
+> `incompatible-version`, а его зависимость
+> `@deepseek-ai/dsh-tool-subagent@0.2.2-rc.1` затеняет совместимый rc.5-пакет.
+> Из-за этого не активируется ни одна строка `tool-subagent` (симптом: нет
+> `subagent_codex*`, `subagent`, `subagent_fork`). Удалите его через
+> `remove_bundle` — форк его заменяет. Если нужен upstream рядом, обновите его
+> до `0.2.2-rc.5`. Подробности: `../../COMPATIBILITY.md`,
+> `../../research/live-e2e-2026-11-19.md`.
 
-Профиль: `C:\Users\<you>\.dsh\profiles\desktop`. Форк ставится как **отдельный
-bundle**, рядом с upstream (не поверх него).
+Профиль: `C:\Users\<you>\.dsh\profiles\desktop`. Форк ставится как
+**отдельный bundle вместо прежнего upstream** (не оставляйте рядом rc.1).
 
-> **Версия хоста.** Артефакт `0.2.2-rc.5-dsh.2` привязан к DSH **0.2.2-rc.5**
+> **Версия хоста.** Артефакт `0.2.2-rc.5-dsh.3` привязан к DSH **0.2.2-rc.5**
 > (deps/peers exact). Для DSH `0.2.2-rc.1` остаётся предыдущий релиз
 > [`v0.2.2-rc.1-dsh.1`](https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.1-dsh.1).
 
-
 ### 0. Готовый tarball из GitHub Release (рекомендуется)
 
-Релиз: <https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.5-dsh.2>
+Релиз: <https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.5-dsh.3>
 
 ```json
 {
   "action": "install_bundle",
-  "target": "https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.2/dsh-subagent-codex-next-0.2.2-rc.5-dsh.2.tgz",
+  "target": "https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.3/dsh-subagent-codex-next-0.2.2-rc.5-dsh.3.tgz",
   "enabled": true
 }
 ```
 
 Это `plugin_manager install_bundle` (агент/страница Plugins); `install_bundle`
-принимает tarball-URL и локальные `file:`-спеки. Дальше — шаг 3.
+принимает tarball-URL и локальные `file:`-спеки.
 
 ### 1. Собрать tarball из исходников (для разработки)
 
 ```powershell
 cd D:\Repos\DSH\plugins\subagents\packages\dsh-subagent-codex-next
 npm pack --pack-destination .artifacts
-# .artifacts\dsh-subagent-codex-next-0.2.2-rc.5-dsh.2.tgz
+# .artifacts\dsh-subagent-codex-next-0.2.2-rc.5-dsh.3.tgz
 ```
 
 ### 2. Установить локальный tarball через `plugin_manager`
 
 ```json
-{"action":"install_bundle","target":"file:D:\\Repos\\DSH\\plugins\\subagents\\packages\\dsh-subagent-codex-next\\.artifacts\\dsh-subagent-codex-next-0.2.2-rc.5-dsh.2.tgz","enabled":true}
+{"action":"install_bundle","target":"file:D:\\Repos\\DSH\\plugins\\subagents\\packages\\dsh-subagent-codex-next\\.artifacts\\dsh-subagent-codex-next-0.2.2-rc.5-dsh.3.tgz","enabled":true}
 ```
 
-`install_bundle` принимает `file:`-спеки (см. README `dsh-plugin-manager`:
-«paths, tarballs … skip the GitHub check»). При установке pnpm скачает
-`@openai/codex@0.166.0` (пакет уже есть в pnpm-store, если в профиле стоит
-`dsh-codex-subtask-cli` = alias 0.166.0). Без HMR активация — после
-перезапуска процесса DSH.
+При установке pnpm поставит `@openai/codex@0.166.0` (пакет уже есть в
+pnpm-store, если в профиле стоит `dsh-codex-subtask-cli` = alias 0.166.0).
 
-### 3. Отключить upstream-bundle и обновить патч профиля
+### 3. Удалить несовместимый upstream и настроить модели
 
-- Выключить `@deepseek-ai/dsh-subagent-codex` в Plugins (dependency остаётся
-  установленной, слой перестаёт применяться).
-- В `cordis.patch.yml` профиля удалить/заменить блок, который вставляет
-  `subagent-codex` / `subagent-codex-luna` / `subagent-codex-terra` и их
-  инструменты: иначе эти `insert`-строки продолжат монтировать upstream-плагин
-  и его `codex`-провайдер с 0.153.4. Новые строки форка (соло/терра) — из
-  раздела «Модели».
-- Перезапустить DSH. Ожидаемо: инструменты `subagent_codex`,
-  `subagent_codex_sol`, `subagent_codex_terra`; каждый turn идёт с новой
-  моделью, в `stderr`/логах нет `model_not_found`.
+1. Если в профиле остался `@deepseek-ai/dsh-subagent-codex@0.2.2-rc.1` —
+   удалите его: `plugin_manager` → `remove_bundle` →
+   `@deepseek-ai/dsh-subagent-codex`. Иначе `@deepseek-ai/dsh-tool-subagent`
+   снова будет резолвиться в rc.1 и все инструменты делегирования исчезнут.
+2. Уберите из `cordis.patch.yml` профиля остатки прежних workaround'ов:
+   `insert`-строки upstream-плагина и override `preset-standard` (если
+   добавляли). Shipped-пресет `standard` должен остаться нетронутым: на rc.5
+   он сам содержит preset-scoped `subagent`/`subagent_fork`, а строки форка —
+   Host-scoped.
+3. Bundle-патч форка регистрирует provider `codex` и базовый инструмент
+   `subagent_codex` (модель — дефолт `~/.codex/config.toml`, т.е.
+   `gpt-6-luna`). Дополнительные варианты добавляются патчем профиля:
+
+   ```yaml
+   - insert:
+       - id: subagent-codex-next-luna
+         name: "dsh-subagent-codex-next"
+         config: { providerName: codex-luna, model: gpt-6-luna }
+       - id: subagent-codex-next-sol
+         name: "dsh-subagent-codex-next"
+         config: { providerName: codex-sol, model: gpt-6.1-sol }
+       - id: subagent-codex-next-terra
+         name: "dsh-subagent-codex-next"
+         config: { providerName: codex-terra, model: gpt-6.1-terra }
+       - id: tool-subagent-codex-next-luna
+         name: "@deepseek-ai/dsh-tool-subagent"
+         config: { provider: codex-luna, toolName: subagent_codex_luna, maxDepth: provider-managed }
+       - id: tool-subagent-codex-next-sol
+         name: "@deepseek-ai/dsh-tool-subagent"
+         config: { provider: codex-sol, toolName: subagent_codex_sol, maxDepth: provider-managed }
+       - id: tool-subagent-codex-next-terra
+         name: "@deepseek-ai/dsh-tool-subagent"
+         config: { provider: codex-terra, toolName: subagent_codex_terra, maxDepth: provider-managed }
+   ```
+
+4. Активация Host-строк обычно происходит live (HMR), инструменты подхватывает
+   и текущая, и новая сессия. Если инструментов нет — перезапустить DSH
+   (полностью приложение) и открыть новую сессию.
+
+Ожидаемо: `subagent_codex`, `subagent_codex_luna`, `subagent_codex_sol`,
+`subagent_codex_terra`; каждый turn идёт с моделью gpt-6.x, в логах нет
+`model_not_found`.
 
 ### Откат
 
@@ -176,9 +206,9 @@ npm pack --pack-destination .artifacts
 {"action":"remove_bundle","target":"dsh-subagent-codex-next"}
 ```
 
-Затем вернуть upstream-bundle (включить) и восстановить прежний блок
-`cordis.patch.yml` (бэкап делается перед правкой вручную). `remove_bundle`
-возвращает манифест профиля и lockfile к состоянию до установки.
+При необходимости upstream ставится заново официальным способом — для rc.5
+версия `0.2.2-rc.5` (rc.1 оставлять бессмысленно: он несовместим с хостом и
+ломает резолвинг `@deepseek-ai/dsh-tool-subagent`). Патч профиля — из бэкапа.
 
 ## Проверка
 
@@ -208,6 +238,10 @@ node scripts/probe-app-server.mjs --command '["node","C:\\...\\dsh-codex-subtask
 
 ## Ограничения и что не проверено
 
+- **Live e2e на DSH `0.2.2-rc.5` пройден (2026-11-19):** `subagent_codex`,
+  `subagent_codex_terra`, `subagent_codex_sol` вернули `OK` нативно через DSH
+  (`gpt-6-luna` / `gpt-6.1-terra` / `gpt-6.1-sol`); детали —
+  `../../COMPATIBILITY.md`, `../../research/live-e2e-2026-11-19.md`.
 - Upstream не публикует свой набор тестов; форк наследует заявление upstream
   «protocol evidence pinned to 0.153.4». Наш probe покрывает main path
   (handshake, thread/start во всех трёх permission-mode, один текстовый turn,
