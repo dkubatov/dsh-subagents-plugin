@@ -1,0 +1,12 @@
+# Fork profile layer: mounts the fork's provider and one global delegation tool.
+# Installed as a separate bundle, this layer does not collide with the upstream
+# bundle because its row ids carry the `-next` suffix.
+- insert:
+    - id: subagent-codex-next
+      name: 'dsh-subagent-codex-next'
+    - id: tool-subagent-codex-next
+      name: '@deepseek-ai/dsh-tool-subagent'
+      config:
+        provider: codex
+        toolName: subagent_codex
+        maxDepth: provider-managed

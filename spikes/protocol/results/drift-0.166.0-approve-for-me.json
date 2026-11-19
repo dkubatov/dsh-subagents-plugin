@@ -1,0 +1,115 @@
+{
+  "slug": "drift-0.166.0-approve-for-me",
+  "binaryId": "0.166.0",
+  "model": null,
+  "mode": "approve-for-me",
+  "permissionParams": {
+    "approvalPolicy": "on-request",
+    "approvalsReviewer": "auto_review",
+    "sandbox": "workspace-write"
+  },
+  "prompt": "Reply with exactly: OK",
+  "cwd": "D:\\Repos\\DSH\\plugins\\subagents\\spikes\\protocol\\tmp\\probe",
+  "startedAt": "2026-11-19T06:21:08.677Z",
+  "outcome": "handshake-only",
+  "elapsedMs": 16048,
+  "initialize": {
+    "ok": true,
+    "elapsedMs": 6480,
+    "result": {
+      "userAgent": "deepseek-harness/0.166.0 (Windows 10.0.19045; x86_64) unknown (deepseek-harness; 0.0.1)",
+      "codexHome": "C:\\Users\\kubat\\.codex",
+      "platformFamily": "windows",
+      "platformOs": "windows"
+    }
+  },
+  "threadStart": {
+    "ok": true,
+    "elapsedMs": 9560,
+    "threadId": "01a1f277-6c4c-7211-9f89-9255a42fd80f",
+    "ephemeral": true,
+    "result": {
+      "thread": {
+        "id": "01a1f277-6c4c-7211-9f89-9255a42fd80f",
+        "environments": [
+          {
+            "environmentId": "local",
+            "cwd": "D:\\Repos\\DSH\\plugins\\subagents\\spikes\\protocol\\tmp\\probe",
+            "runtimeWorkspaceRoots": [
+              "D:\\Repos\\DSH\\plugins\\subagents\\spikes\\protocol\\tmp\\probe"
+            ]
+          }
+        ],
+        "extra": null,
+        "sessionId": "01a1f277-6c4c-7211-9f89-9255a42fd80f",
+        "forkedFromId": null,
+        "parentThreadId": null,
+        "preview": "",
+        "ephemeral": true,
+        "section": null,
+        "sectionEnteredAt": null,
+        "projectId": null,
+        "historyMode": "paginated",
+        "modelProvider": "openai",
+        "model": "gpt-6-luna",
+        "reasoningEffort": "medium",
+        "createdAt": 1795069283,
+        "updatedAt": 1795069283,
+        "recencyAt": 1795069283,
+        "status": {
+          "type": "idle"
+        },
+        "path": null,
+        "cwd": "D:\\Repos\\DSH\\plugins\\subagents\\spikes\\protocol\\tmp\\probe",
+        "cliVersion": "0.166.0",
+        "originator": "deepseek-harness",
+        "source": "vscode",
+        "canAcceptDirectInput": true,
+        "threadSource": null,
+        "agentNickname": null,
+        "agentRole": null,
+        "gitInfo": null,
+        "name": null,
+        "daybreakEnabled": null,
+        "turns": []
+      },
+      "model": "gpt-6-luna",
+      "modelProvider": "openai",
+      "serviceTier": "priority",
+      "disabledPluginIds": [],
+      "cwd": "D:\\Repos\\DSH\\plugins\\subagents\\spikes\\protocol\\tmp\\probe",
+      "runtimeWorkspaceRoots": [
+        "D:\\Repos\\DSH\\plugins\\subagents\\spikes\\protocol\\tmp\\probe"
+      ],
+      "instructionSources": [],
+      "approvalPolicy": "on-request",
+      "approvalsReviewer": "auto_review",
+      "sandbox": {
+        "type": "workspaceWrite",
+        "writableRoots": [],
+        "networkAccess": false,
+        "excludeTmpdirEnvVar": false,
+        "excludeSlashTmp": false
+      },
+      "activePermissionProfile": null,
+      "reasoningEffort": "medium",
+      "multiAgentMode": "explicitRequestOnly"
+    }
+  },
+  "turnStart": {
+    "ok": false
+  },
+  "notifications": [
+    {
+      "method": "remoteControl/status/changed",
+      "count": 1
+    },
+    {
+      "method": "account/updated",
+      "count": 1
+    }
+  ],
+  "serverRequests": [],
+  "unknownServerRequests": [],
+  "stderrTail": "2026-11-19T06:21:20.254015Z ERROR codex_skills_extension::host_service: failed to install system skills: io error while remove existing system skills dir: Отказано в доступе. (os error 5)\n2026-11-19T06:21:24.273780Z ERROR codex_skills_extension::host_service: failed to install system skills: io error while remove existing system skills dir: Отказано в доступе. (os error 5)\n2026-11-19T06:21:24.685443Z ERROR codex_skills_extension::host_service: failed to install system skills: io error while remove existing system skills dir: Отказано в доступе. (os error 5)\n"
+}

@@ -1,0 +1,75 @@
+{
+  "name": "dsh-subagent-codex-next",
+  "description": "One-shot Codex subagent provider for DeepSeek Harness — fork with a modern Codex payload, configurable executable, and a self-contained profile layer",
+  "version": "0.2.2-rc.1-dsh.1",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dkubatov/dsh-subagents-plugin.git",
+    "directory": "packages/dsh-subagent-codex-next"
+  },
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json",
+    "./cordis.patch.yml": "./cordis.patch.yml"
+  },
+  "files": [
+    "icon.svg",
+    "locale/*.json",
+    "lib/index.js",
+    "lib/types/**/*.d.ts",
+    "src/**/*.ts",
+    "scripts/**/*.mjs",
+    "cordis.patch.yml"
+  ],
+  "license": "MIT",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "dsh": ">=0.2.2-rc.1 <0.2.3-0"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "~4.1.0",
+    "@deepseek-ai/dsh-llm": ">=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-session": ">=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-subagent": ">=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-subprocess": ">=0.2.2-rc.1 <0.2.3-0",
+    "@deepseek-ai/dsh-timeout": ">=0.2.2-rc.1 <0.2.3-0"
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh-brand": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-sdk-protocol": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-tool-subagent": "0.2.2-rc.1",
+    "@deepseek-ai/schemastery": "~3.19.0",
+    "@openai/codex": "0.166.0"
+  },
+  "scripts": {
+    "probe": "node scripts/probe-app-server.mjs",
+    "check": "node --check lib/index.js && node scripts/probe-app-server.mjs --no-turn"
+  },
+  "icon": "./icon.svg",
+  "homepage": "https://github.com/dkubatov/dsh-subagents-plugin/tree/main/packages/dsh-subagent-codex-next",
+  "bugs": {
+    "url": "https://github.com/dkubatov/dsh-subagents-plugin/issues"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "dsh",
+    "codex",
+    "subagent",
+    "openai-codex"
+  ],
+  "author": "dkubatov"
+}

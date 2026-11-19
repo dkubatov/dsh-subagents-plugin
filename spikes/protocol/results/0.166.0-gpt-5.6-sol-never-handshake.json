@@ -1,0 +1,113 @@
+{
+  "slug": "0.166.0-gpt-5.6-sol-never-handshake",
+  "binaryId": "0.166.0",
+  "model": "gpt-5.6-sol",
+  "mode": "never",
+  "permissionParams": {
+    "approvalPolicy": "never"
+  },
+  "prompt": "Reply with exactly: OK",
+  "cwd": "D:\\Repos\\DSH\\plugins\\subagents\\spikes\\protocol\\tmp\\probe",
+  "startedAt": "2026-11-19T06:20:09.413Z",
+  "outcome": "handshake-only",
+  "elapsedMs": 3009,
+  "initialize": {
+    "ok": true,
+    "elapsedMs": 1297,
+    "result": {
+      "userAgent": "deepseek-harness/0.166.0 (Windows 10.0.19045; x86_64) unknown (deepseek-harness; 0.0.1)",
+      "codexHome": "C:\\Users\\kubat\\.codex",
+      "platformFamily": "windows",
+      "platformOs": "windows"
+    }
+  },
+  "threadStart": {
+    "ok": true,
+    "elapsedMs": 1690,
+    "threadId": "01a1f276-70cb-7a53-bd78-dc67dc8c38f1",
+    "ephemeral": true,
+    "result": {
+      "thread": {
+        "id": "01a1f276-70cb-7a53-bd78-dc67dc8c38f1",
+        "environments": [
+          {
+            "environmentId": "local",
+            "cwd": "D:\\Repos\\DSH\\plugins\\subagents\\spikes\\protocol\\tmp\\probe",
+            "runtimeWorkspaceRoots": [
+              "D:\\Repos\\DSH\\plugins\\subagents\\spikes\\protocol\\tmp\\probe"
+            ]
+          }
+        ],
+        "extra": null,
+        "sessionId": "01a1f276-70cb-7a53-bd78-dc67dc8c38f1",
+        "forkedFromId": null,
+        "parentThreadId": null,
+        "preview": "",
+        "ephemeral": true,
+        "section": null,
+        "sectionEnteredAt": null,
+        "projectId": null,
+        "historyMode": "paginated",
+        "modelProvider": "openai",
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "medium",
+        "createdAt": 1795069212,
+        "updatedAt": 1795069212,
+        "recencyAt": 1795069212,
+        "status": {
+          "type": "idle"
+        },
+        "path": null,
+        "cwd": "D:\\Repos\\DSH\\plugins\\subagents\\spikes\\protocol\\tmp\\probe",
+        "cliVersion": "0.166.0",
+        "originator": "deepseek-harness",
+        "source": "vscode",
+        "canAcceptDirectInput": true,
+        "threadSource": null,
+        "agentNickname": null,
+        "agentRole": null,
+        "gitInfo": null,
+        "name": null,
+        "daybreakEnabled": null,
+        "turns": []
+      },
+      "model": "gpt-5.6-sol",
+      "modelProvider": "openai",
+      "serviceTier": "priority",
+      "disabledPluginIds": [],
+      "cwd": "D:\\Repos\\DSH\\plugins\\subagents\\spikes\\protocol\\tmp\\probe",
+      "runtimeWorkspaceRoots": [
+        "D:\\Repos\\DSH\\plugins\\subagents\\spikes\\protocol\\tmp\\probe"
+      ],
+      "instructionSources": [],
+      "approvalPolicy": "never",
+      "approvalsReviewer": "auto_review",
+      "sandbox": {
+        "type": "workspaceWrite",
+        "writableRoots": [],
+        "networkAccess": false,
+        "excludeTmpdirEnvVar": false,
+        "excludeSlashTmp": false
+      },
+      "activePermissionProfile": null,
+      "reasoningEffort": "medium",
+      "multiAgentMode": "explicitRequestOnly"
+    }
+  },
+  "turnStart": {
+    "ok": false
+  },
+  "notifications": [
+    {
+      "method": "remoteControl/status/changed",
+      "count": 1
+    },
+    {
+      "method": "account/updated",
+      "count": 1
+    }
+  ],
+  "serverRequests": [],
+  "unknownServerRequests": [],
+  "stderrTail": ""
+}

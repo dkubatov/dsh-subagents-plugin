@@ -1,0 +1,540 @@
+{
+  "generatedAt": "2026-11-19T06:22:06.395Z",
+  "prompt": "Reply with exactly: OK",
+  "cases": [
+    {
+      "binaryId": "app-0.169.0-alpha.11.1",
+      "model": "gpt-6-luna",
+      "role": "candidate",
+      "outcome": "success",
+      "turnStatus": "completed",
+      "turnError": null,
+      "outputText": "OK",
+      "elapsedMs": 5396,
+      "initializeOk": true,
+      "threadId": "01a1f276-f188-77a3-ac76-6dc6e75bded2",
+      "ephemeral": true,
+      "notifications": [
+        {
+          "method": "remoteControl/status/changed",
+          "count": 1
+        },
+        {
+          "method": "mcpServer/startupStatus/updated",
+          "count": 15
+        },
+        {
+          "method": "thread/started",
+          "count": 1
+        },
+        {
+          "method": "account/updated",
+          "count": 1
+        },
+        {
+          "method": "thread/status/changed",
+          "count": 2
+        },
+        {
+          "method": "turn/started",
+          "count": 1
+        },
+        {
+          "method": "item/started",
+          "count": 2
+        },
+        {
+          "method": "item/completed",
+          "count": 2
+        },
+        {
+          "method": "item/agentMessage/delta",
+          "count": 1
+        },
+        {
+          "method": "thread/tokenUsage/updated",
+          "count": 1
+        },
+        {
+          "method": "account/rateLimits/updated",
+          "count": 1
+        },
+        {
+          "method": "turn/completed",
+          "count": 1
+        }
+      ],
+      "serverRequests": [],
+      "logFile": "logs/matrix-app-0.169.0-alpha.11.1-gpt-6-luna.jsonl",
+      "resultFile": "results/matrix-app-0.169.0-alpha.11.1-gpt-6-luna.json",
+      "wallMs": 5491
+    },
+    {
+      "binaryId": "app-0.169.0-alpha.11.1",
+      "model": "gpt-6.1-sol",
+      "role": "candidate",
+      "outcome": "success",
+      "turnStatus": "completed",
+      "turnError": null,
+      "outputText": "OK",
+      "elapsedMs": 5095,
+      "initializeOk": true,
+      "threadId": "01a1f277-0647-7322-af14-a170647e6be0",
+      "ephemeral": true,
+      "notifications": [
+        {
+          "method": "remoteControl/status/changed",
+          "count": 1
+        },
+        {
+          "method": "thread/started",
+          "count": 1
+        },
+        {
+          "method": "mcpServer/startupStatus/updated",
+          "count": 12
+        },
+        {
+          "method": "account/updated",
+          "count": 1
+        },
+        {
+          "method": "thread/status/changed",
+          "count": 2
+        },
+        {
+          "method": "turn/started",
+          "count": 1
+        },
+        {
+          "method": "item/started",
+          "count": 2
+        },
+        {
+          "method": "item/completed",
+          "count": 2
+        },
+        {
+          "method": "item/agentMessage/delta",
+          "count": 1
+        },
+        {
+          "method": "thread/tokenUsage/updated",
+          "count": 1
+        },
+        {
+          "method": "account/rateLimits/updated",
+          "count": 1
+        },
+        {
+          "method": "turn/completed",
+          "count": 1
+        }
+      ],
+      "serverRequests": [],
+      "logFile": "logs/matrix-app-0.169.0-alpha.11.1-gpt-6.1-sol.jsonl",
+      "resultFile": "results/matrix-app-0.169.0-alpha.11.1-gpt-6.1-sol.json",
+      "wallMs": 5234
+    },
+    {
+      "binaryId": "app-0.169.0-alpha.11.1",
+      "model": "gpt-5.6-sol",
+      "role": "candidate",
+      "outcome": "success",
+      "turnStatus": "completed",
+      "turnError": null,
+      "outputText": "OK",
+      "elapsedMs": 9028,
+      "initializeOk": true,
+      "threadId": "01a1f277-1b4e-7801-b1a9-abf9f0fad185",
+      "ephemeral": true,
+      "notifications": [
+        {
+          "method": "remoteControl/status/changed",
+          "count": 1
+        },
+        {
+          "method": "account/updated",
+          "count": 1
+        },
+        {
+          "method": "mcpServer/startupStatus/updated",
+          "count": 13
+        },
+        {
+          "method": "thread/started",
+          "count": 1
+        },
+        {
+          "method": "thread/status/changed",
+          "count": 2
+        },
+        {
+          "method": "turn/started",
+          "count": 1
+        },
+        {
+          "method": "item/started",
+          "count": 2
+        },
+        {
+          "method": "item/completed",
+          "count": 2
+        },
+        {
+          "method": "item/agentMessage/delta",
+          "count": 1
+        },
+        {
+          "method": "thread/tokenUsage/updated",
+          "count": 1
+        },
+        {
+          "method": "account/rateLimits/updated",
+          "count": 1
+        },
+        {
+          "method": "turn/completed",
+          "count": 1
+        }
+      ],
+      "serverRequests": [],
+      "logFile": "logs/matrix-app-0.169.0-alpha.11.1-gpt-5.6-sol.jsonl",
+      "resultFile": "results/matrix-app-0.169.0-alpha.11.1-gpt-5.6-sol.json",
+      "wallMs": 10696
+    },
+    {
+      "binaryId": "0.166.0",
+      "model": "gpt-6-luna",
+      "role": "candidate",
+      "outcome": "success",
+      "turnStatus": "completed",
+      "turnError": null,
+      "outputText": "OK",
+      "elapsedMs": 27719,
+      "initializeOk": true,
+      "threadId": "01a1f277-65a7-7893-a563-fdffd1c4e28a",
+      "ephemeral": true,
+      "notifications": [
+        {
+          "method": "remoteControl/status/changed",
+          "count": 1
+        },
+        {
+          "method": "account/updated",
+          "count": 1
+        },
+        {
+          "method": "thread/started",
+          "count": 1
+        },
+        {
+          "method": "mcpServer/startupStatus/updated",
+          "count": 10
+        },
+        {
+          "method": "thread/status/changed",
+          "count": 2
+        },
+        {
+          "method": "turn/started",
+          "count": 1
+        },
+        {
+          "method": "item/started",
+          "count": 2
+        },
+        {
+          "method": "item/completed",
+          "count": 2
+        },
+        {
+          "method": "item/agentMessage/delta",
+          "count": 1
+        },
+        {
+          "method": "thread/tokenUsage/updated",
+          "count": 1
+        },
+        {
+          "method": "account/rateLimits/updated",
+          "count": 1
+        },
+        {
+          "method": "turn/completed",
+          "count": 1
+        }
+      ],
+      "serverRequests": [],
+      "logFile": "logs/matrix-0.166.0-gpt-6-luna.jsonl",
+      "resultFile": "results/matrix-0.166.0-gpt-6-luna.json",
+      "wallMs": 27860
+    },
+    {
+      "binaryId": "0.166.0",
+      "model": "gpt-6.1-sol",
+      "role": "candidate",
+      "outcome": "success",
+      "turnStatus": "completed",
+      "turnError": null,
+      "outputText": "OK",
+      "elapsedMs": 11761,
+      "initializeOk": true,
+      "threadId": "01a1f277-b8cc-7d31-9840-3802c25ae661",
+      "ephemeral": true,
+      "notifications": [
+        {
+          "method": "remoteControl/status/changed",
+          "count": 1
+        },
+        {
+          "method": "account/updated",
+          "count": 1
+        },
+        {
+          "method": "thread/started",
+          "count": 1
+        },
+        {
+          "method": "mcpServer/startupStatus/updated",
+          "count": 10
+        },
+        {
+          "method": "thread/status/changed",
+          "count": 2
+        },
+        {
+          "method": "turn/started",
+          "count": 1
+        },
+        {
+          "method": "item/started",
+          "count": 2
+        },
+        {
+          "method": "item/completed",
+          "count": 2
+        },
+        {
+          "method": "item/agentMessage/delta",
+          "count": 1
+        },
+        {
+          "method": "thread/tokenUsage/updated",
+          "count": 1
+        },
+        {
+          "method": "account/rateLimits/updated",
+          "count": 1
+        },
+        {
+          "method": "turn/completed",
+          "count": 1
+        }
+      ],
+      "serverRequests": [],
+      "logFile": "logs/matrix-0.166.0-gpt-6.1-sol.jsonl",
+      "resultFile": "results/matrix-0.166.0-gpt-6.1-sol.json",
+      "wallMs": 11915
+    },
+    {
+      "binaryId": "0.166.0",
+      "model": "gpt-5.6-sol",
+      "role": "candidate",
+      "outcome": "success",
+      "turnStatus": "completed",
+      "turnError": null,
+      "outputText": "OK",
+      "elapsedMs": 7698,
+      "initializeOk": true,
+      "threadId": "01a1f277-e2d6-71f1-8f45-1ed9688a560c",
+      "ephemeral": true,
+      "notifications": [
+        {
+          "method": "remoteControl/status/changed",
+          "count": 1
+        },
+        {
+          "method": "account/updated",
+          "count": 1
+        },
+        {
+          "method": "mcpServer/startupStatus/updated",
+          "count": 10
+        },
+        {
+          "method": "thread/started",
+          "count": 1
+        },
+        {
+          "method": "thread/status/changed",
+          "count": 2
+        },
+        {
+          "method": "turn/started",
+          "count": 1
+        },
+        {
+          "method": "item/started",
+          "count": 2
+        },
+        {
+          "method": "item/completed",
+          "count": 2
+        },
+        {
+          "method": "item/agentMessage/delta",
+          "count": 1
+        },
+        {
+          "method": "thread/tokenUsage/updated",
+          "count": 1
+        },
+        {
+          "method": "account/rateLimits/updated",
+          "count": 1
+        },
+        {
+          "method": "turn/completed",
+          "count": 1
+        }
+      ],
+      "serverRequests": [],
+      "logFile": "logs/matrix-0.166.0-gpt-5.6-sol.jsonl",
+      "resultFile": "results/matrix-0.166.0-gpt-5.6-sol.json",
+      "wallMs": 7919
+    },
+    {
+      "binaryId": "app-0.169.0-alpha.11.1",
+      "model": "gpt-6.1-terra",
+      "role": "candidate",
+      "outcome": "success",
+      "turnStatus": "completed",
+      "turnError": null,
+      "outputText": "OK",
+      "elapsedMs": 7842,
+      "initializeOk": true,
+      "threadId": "01a1f278-0216-73f1-a045-2241f478c562",
+      "ephemeral": true,
+      "notifications": [
+        {
+          "method": "remoteControl/status/changed",
+          "count": 1
+        },
+        {
+          "method": "account/updated",
+          "count": 1
+        },
+        {
+          "method": "mcpServer/startupStatus/updated",
+          "count": 10
+        },
+        {
+          "method": "thread/started",
+          "count": 1
+        },
+        {
+          "method": "thread/status/changed",
+          "count": 2
+        },
+        {
+          "method": "turn/started",
+          "count": 1
+        },
+        {
+          "method": "item/started",
+          "count": 2
+        },
+        {
+          "method": "item/completed",
+          "count": 2
+        },
+        {
+          "method": "item/agentMessage/delta",
+          "count": 1
+        },
+        {
+          "method": "thread/tokenUsage/updated",
+          "count": 1
+        },
+        {
+          "method": "account/rateLimits/updated",
+          "count": 1
+        },
+        {
+          "method": "turn/completed",
+          "count": 1
+        }
+      ],
+      "serverRequests": [],
+      "logFile": "logs/matrix-app-0.169.0-alpha.11.1-gpt-6.1-terra.jsonl",
+      "resultFile": "results/matrix-app-0.169.0-alpha.11.1-gpt-6.1-terra.json",
+      "wallMs": 7936
+    },
+    {
+      "binaryId": "plugin-0.153.4",
+      "model": "gpt-6-luna",
+      "role": "control",
+      "outcome": "turn-failed",
+      "turnStatus": "failed",
+      "codexErrorInfo": "other",
+      "turnError": {
+        "message": "{\"type\":\"error\",\"status\":400,\"error\":{\"type\":\"invalid_request_error\",\"message\":\"The 'gpt-6-luna' model is not supported when using Codex with a ChatGPT account.\",\"code\":\"model_not_found\"}}",
+        "codexErrorInfo": "other",
+        "additionalDetails": null,
+        "misalignment": null
+      },
+      "elapsedMs": 6122,
+      "initializeOk": true,
+      "threadId": "01a1f278-2270-7d23-af16-64ee1b524426",
+      "ephemeral": true,
+      "notifications": [
+        {
+          "method": "remoteControl/status/changed",
+          "count": 1
+        },
+        {
+          "method": "thread/started",
+          "count": 1
+        },
+        {
+          "method": "mcpServer/startupStatus/updated",
+          "count": 10
+        },
+        {
+          "method": "warning",
+          "count": 2
+        },
+        {
+          "method": "thread/status/changed",
+          "count": 2
+        },
+        {
+          "method": "turn/started",
+          "count": 1
+        },
+        {
+          "method": "item/started",
+          "count": 1
+        },
+        {
+          "method": "item/completed",
+          "count": 1
+        },
+        {
+          "method": "error",
+          "count": 1
+        },
+        {
+          "method": "turn/completed",
+          "count": 1
+        }
+      ],
+      "serverRequests": [],
+      "logFile": "logs/matrix-plugin-0.153.4-gpt-6-luna.jsonl",
+      "resultFile": "results/matrix-plugin-0.153.4-gpt-6-luna.json",
+      "wallMs": 6169
+    }
+  ],
+  "modelCalls": 8
+}

@@ -1,0 +1,28 @@
+# Dependencies / tooling
+node_modules/
+tools/node_modules/
+tools/asar-extract/
+tools/asar-list.txt
+tools/package-lock.json
+
+# Build and probe artifacts (regenerate locally; release tarballs live in GitHub Releases)
+packages/*/.artifacts/
+**/scripts/tmp/
+spikes/protocol/tmp/
+
+# Generated protocol schemas (regenerate with `node schema-diff.mjs`; only the diff stays in git)
+spikes/protocol/schema/0.166.0/
+spikes/protocol/schema/app-0.169.0-alpha.11.1/
+spikes/protocol/schema/plugin-0.153.4/
+
+# Third-party npm tarballs / unpacked copies (reproduce with `npm pack`; reports keep the data)
+research/npm/*.tgz
+research/npm/x-*/
+
+# Scratch profile copies created while verifying the pnpm override
+research/override/profile-copy/
+research/fork-install-test/
+
+# Scratch
+tmp/
+*.log
