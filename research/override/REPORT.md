@@ -5,22 +5,22 @@
 Живой профиль не изменялся: всё выполнялось в `research/override/profile-copy/`.
 
 - Дата проверки: 2026-11-19
-- Окружение: Windows, node v24.19.0 (system), pnpm 11.28.5 (bundled DSH runtime), store `C:\Users\kubat\AppData\Local\pnpm\store\v11` (1273 MB)
-- Изолированная копия: `research/override/profile-copy/` (создана копированием `package.json`, `pnpm-workspace.yaml`, `pnpm-lock.yaml` из `C:\Users\kubat\.dsh\profiles\desktop`; без `node_modules`)
+- Окружение: Windows, node v24.19.0 (system), pnpm 11.28.5 (bundled DSH runtime), store `<HOME>\AppData\Local\pnpm\store\v11` (1273 MB)
+- Изолированная копия: `research/override/profile-copy/` (создана копированием `package.json`, `pnpm-workspace.yaml`, `pnpm-lock.yaml` из `<DSH_PROFILE_DIR>`; без `node_modules`)
 
 ## 1. Точная команда запуска pnpm
 
 `pnpm` в PATH отсутствует. Бандленный pnpm лежит в runtime DSH:
 
 ```powershell
-$pnpm = 'D:\DeepSeek\resources\runtime\primary-runtime\dependencies\pnpm\bin\pnpm.cjs'
-node $pnpm --version    # 11.28.5  (совпадает с D:\DeepSeek\resources\runtime\versions.json)
+$pnpm = '<DSH_INSTALL_DIR>\resources\runtime\primary-runtime\dependencies\pnpm\bin\pnpm.cjs'
+node $pnpm --version    # 11.28.5  (совпадает с <DSH_INSTALL_DIR>\resources\runtime\versions.json)
 ```
 
 Полная команда установки в копии (использовалась фактически):
 
 ```powershell
-$store = 'C:\Users\kubat\AppData\Local\pnpm\store\v11'
+$store = '<HOME>\AppData\Local\pnpm\store\v11'
 node $pnpm install --offline --config.storeDir="$store" --config.package-import-method=copy --reporter=append-only
 ```
 
@@ -135,7 +135,7 @@ overrides:
 
 **Рекомендация для плана:**
 1. Использовать **override в `pnpm-workspace.yaml`** как основной механизм: минимальное вмешательство, переживает правки plugin-manager'а лучше package.json, не требует форка, смена версии — одна строка.
-2. Для живого профиля (когда Lead решит): добавить блок `overrides` в `C:\Users\kubat\.dsh\profiles\desktop\pnpm-workspace.yaml`, выполнить `pnpm install` (5–10 с, ~490 MB `node_modules`), затем прогнать `verify-resolve.mjs` и e2e subagent-задачу.
+2. Для живого профиля (когда Lead решит): добавить блок `overrides` в `<DSH_PROFILE_DIR>\pnpm-workspace.yaml`, выполнить `pnpm install` (5–10 с, ~490 MB `node_modules`), затем прогнать `verify-resolve.mjs` и e2e subagent-задачу.
 3. Форк/патч манифеста плагина (`@openai/codex: 0.166.0` в его `dependencies`) — только если понадобится менять код под протокол 0.166.0; для простого обновления версии форк избыточен.
 4. В репозиторий добавить проверочный скрипт (`research/override/verify-resolve.mjs` как основа) и упомянуть override в документации: он должен переприменяться после установок/обновлений плагинов.
 
@@ -144,4 +144,4 @@ overrides:
 - `research/override/profile-copy/` — изолированная копия профиля в финальном **рабочем** состоянии (variant A): `pnpm-workspace.yaml` с `overrides`, перегенерированный `pnpm-lock.yaml` (0.153.4 = 0 вхождений), исходники в `*.orig.*`. `node_modules` после проверки удалён (воспроизводится командой из п.1 за ~5 с).
 - `research/override/verify-resolve.mjs` — верификатор резолвинга из плагина (+ `--version`, платформенный пакет, stale-поиск).
 - `research/override/logs/` — `install-A-final.log`, `install-B.log`, `verify-A-final.log`, `verify-B.log`.
-- Живой профиль `C:\Users\kubat\.dsh\profiles\desktop`, `~/.codex` и установленные пакеты **не изменялись** (только чтение).
+- Живой профиль `<DSH_PROFILE_DIR>`, `~/.codex` и установленные пакеты **не изменялись** (только чтение).

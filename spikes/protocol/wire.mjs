@@ -1,7 +1,7 @@
 // Faithful re-implementation of the DSH codex-subagent wire layer:
 //   @deepseek-ai/dsh-subagent-codex@0.2.2-rc.1 -> lib/index.js
-//   CodexAppServerWire + startCodexRun (read at
-//   C:\Users\kubat\.dsh\profiles\desktop\node_modules\@deepseek-ai\dsh-subagent-codex\lib\index.js)
+//   CodexAppServerWire + startCodexRun (see <DSH_PROFILE_DIR>/node_modules/
+//   @deepseek-ai/dsh-subagent-codex/lib/index.js for the upstream source)
 //
 // Purpose: drive `codex app-server --stdio` over newline-delimited JSON-RPC 2.0
 // with exactly the requests/notifications the plugin sends, so we can measure
@@ -10,7 +10,7 @@
 // No environment is logged; only JSON-RPC frames (plus a redacted stderr tail).
 
 import { spawn } from "node:child_process";
-import { createWriteStream, mkdirSync, writeFileSync } from "node:fs";
+import { createWriteStream, existsSync, mkdirSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -26,34 +26,51 @@ export const TMP_DIR = join(ROOT, "tmp", "probe");
 // ---------------------------------------------------------------------------
 const LOCALAPPDATA = process.env.LOCALAPPDATA ?? "";
 const USERPROFILE = process.env.USERPROFILE ?? "";
+const PROFILE_DIR = process.env.DSH_PROFILE_DIR ?? join(USERPROFILE, ".dsh", "profiles", "desktop");
+
+// The desktop app binary lives under a per-install build directory; resolve the
+// largest codex.exe instead of hardcoding a build hash.
+function resolveAppCodex() {
+  const binRoot = join(LOCALAPPDATA, "OpenAI", "Codex", "bin");
+  try {
+    const builds = readdirSync(binRoot, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => join(binRoot, entry.name, "codex.exe"))
+      .filter((path) => existsSync(path));
+    return builds.sort((a, b) => statSync(b).size - statSync(a).size)[0] ?? "";
+  } catch {
+    return "";
+  }
+}
+const APP_CODEX = resolveAppCodex();
 
 export const BINARIES = {
   "app-0.169.0-alpha.11.1": {
-    argv: [join(LOCALAPPDATA, "OpenAI", "Codex", "bin", "22fc0d1de88fa0c1", "codex.exe")],
-    versionArgv: [join(LOCALAPPDATA, "OpenAI", "Codex", "bin", "22fc0d1de88fa0c1", "codex.exe")],
-    launchedBy: "desktop app binary",
+    argv: [APP_CODEX],
+    versionArgv: [APP_CODEX],
+    launchedBy: "desktop app binary (label kept from the original spike run)",
   },
   "0.166.0": {
     argv: [
       process.execPath,
-      join(USERPROFILE, ".dsh", "profiles", "desktop", "node_modules", "dsh-codex-subtask-cli", "bin", "codex.js"),
+      join(PROFILE_DIR, "node_modules", "dsh-codex-subtask-cli", "bin", "codex.js"),
     ],
     versionArgv: [
       process.execPath,
-      join(USERPROFILE, ".dsh", "profiles", "desktop", "node_modules", "dsh-codex-subtask-cli", "bin", "codex.js"),
+      join(PROFILE_DIR, "node_modules", "dsh-codex-subtask-cli", "bin", "codex.js"),
     ],
     launchedBy: "node wrapper dsh-codex-subtask-cli (alias of @openai/codex@0.166.0)",
   },
   "plugin-0.153.4": {
     argv: [
       process.execPath,
-      join(USERPROFILE, ".dsh", "profiles", "desktop", "node_modules", "@openai", "codex", "bin", "codex.js"),
+      join(PROFILE_DIR, "node_modules", "@openai", "codex", "bin", "codex.js"),
     ],
     versionArgv: [
       process.execPath,
-      join(USERPROFILE, ".dsh", "profiles", "desktop", "node_modules", "@openai", "codex", "bin", "codex.js"),
+      join(PROFILE_DIR, "node_modules", "@openai", "codex", "bin", "codex.js"),
     ],
-    launchedBy: "node wrapper @openai/codex@0.153.4 (plugin's pinned dependency)",
+    launchedBy: "node wrapper @openai/codex from the profile (label kept from the original spike run)",
   },
 };
 

@@ -9,7 +9,7 @@
     "sandbox": "workspace-write"
   },
   "prompt": "Reply with exactly: OK",
-  "cwd": "D:\\Repos\\DSH\\plugins\\subagents\\spikes\\protocol\\tmp\\probe",
+  "cwd": "<workspace>\\spikes\\protocol\\tmp\\probe",
   "startedAt": "2026-11-19T06:21:08.677Z",
   "outcome": "handshake-only",
   "elapsedMs": 16048,
@@ -18,7 +18,7 @@
     "elapsedMs": 6480,
     "result": {
       "userAgent": "deepseek-harness/0.166.0 (Windows 10.0.19045; x86_64) unknown (deepseek-harness; 0.0.1)",
-      "codexHome": "C:\\Users\\kubat\\.codex",
+      "codexHome": "<HOME>\\.codex",
       "platformFamily": "windows",
       "platformOs": "windows"
     }
@@ -34,9 +34,9 @@
         "environments": [
           {
             "environmentId": "local",
-            "cwd": "D:\\Repos\\DSH\\plugins\\subagents\\spikes\\protocol\\tmp\\probe",
+            "cwd": "<workspace>\\spikes\\protocol\\tmp\\probe",
             "runtimeWorkspaceRoots": [
-              "D:\\Repos\\DSH\\plugins\\subagents\\spikes\\protocol\\tmp\\probe"
+              "<workspace>\\spikes\\protocol\\tmp\\probe"
             ]
           }
         ],
@@ -60,7 +60,7 @@
           "type": "idle"
         },
         "path": null,
-        "cwd": "D:\\Repos\\DSH\\plugins\\subagents\\spikes\\protocol\\tmp\\probe",
+        "cwd": "<workspace>\\spikes\\protocol\\tmp\\probe",
         "cliVersion": "0.166.0",
         "originator": "deepseek-harness",
         "source": "vscode",
@@ -77,9 +77,9 @@
       "modelProvider": "openai",
       "serviceTier": "priority",
       "disabledPluginIds": [],
-      "cwd": "D:\\Repos\\DSH\\plugins\\subagents\\spikes\\protocol\\tmp\\probe",
+      "cwd": "<workspace>\\spikes\\protocol\\tmp\\probe",
       "runtimeWorkspaceRoots": [
-        "D:\\Repos\\DSH\\plugins\\subagents\\spikes\\protocol\\tmp\\probe"
+        "<workspace>\\spikes\\protocol\\tmp\\probe"
       ],
       "instructionSources": [],
       "approvalPolicy": "on-request",

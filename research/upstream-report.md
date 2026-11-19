@@ -1,7 +1,7 @@
 # Апстрим-ресёрч: DSH subagent-codex + @openai/codex (gpt-6.x, ChatGPT-аккаунт)
 
 Дата: 2026-11-19 · Автор: teammate `upstream-research` · Задача: task-2
-Рабочая директория: `D:\Repos\DSH\plugins\subagents` · Артефакты: `research/npm/`
+Рабочая директория: `<workspace>` · Артефакты: `research/npm/`
 
 ## TL;DR (однозначная рекомендация)
 
@@ -127,13 +127,13 @@ alpha  = 0.2.2-alpha.3
 
 ### 4.1. Что установлено
 
-- `D:\DeepSeek\resources\app-update.yml`: `provider: generic`, `url: https://download.deepseek.com/dsh-desk/feeds/win-x64/`, `channel: nightly` (плюс `publisherName` CN=Hangzhou DeepSeek…).
-- `D:\DeepSeek\resources\app.asar` (213 MB), разбор заголовка asar (см. `research/asar-peek.mjs`):
+- `<DSH_INSTALL_DIR>\resources\app-update.yml`: `provider: generic`, `url: https://download.deepseek.com/dsh-desk/feeds/win-x64/`, `channel: nightly` (плюс `publisherName` CN=Hangzhou DeepSeek…).
+- `<DSH_INSTALL_DIR>\resources\app.asar` (213 MB), разбор заголовка asar (см. `research/asar-peek.mjs`):
   - `/package.json` → **`@deepseek-ai/dsh-desktop@0.2.2-rc.1`**;
   - `/dsh/package.json` → **`@deepseek-ai/dsh-desktop-runtime@0.2.2-rc.1`**;
   - внутри asar: `electron-updater@6.8.9` и `node_modules/ws` и т.п. — т.е. автообновление Electron работает.
-- `D:\DeepSeek\DeepSeek Harness.exe` FileVersion = **0.2.2-rc.1** (ProductVersion 0.2.2.0).
-- Профиль `C:\Users\kubat\.dsh\profiles\desktop\package.json`: `@deepseek-ai/dsh-subagent-codex: "0.2.2-rc.1"`, `dsh-codex-subscription: ^3.2.14`, `dsh-codex-subtask-cli: npm:@openai/codex@0.166.0`; `pnpm-workspace.yaml`: `nodeLinker: hoisted`, **`autoInstallPeers: false`**.
+- `<DSH_INSTALL_DIR>\DeepSeek Harness.exe` FileVersion = **0.2.2-rc.1** (ProductVersion 0.2.2.0).
+- Профиль `<DSH_PROFILE_DIR>\package.json`: `@deepseek-ai/dsh-subagent-codex: "0.2.2-rc.1"`, `dsh-codex-subscription: ^3.2.14`, `dsh-codex-subtask-cli: npm:@openai/codex@0.166.0`; `pnpm-workspace.yaml`: `nodeLinker: hoisted`, **`autoInstallPeers: false`**.
 - Локально на диске есть **оба** платформенных бинаря Codex:
   - `desktop/node_modules/@openai/codex[-win32-x64]` → **0.153.4** (используется плагином);
   - `desktop/node_modules/dsh-codex-subtask-cli/node_modules/@openai/codex-win32-x64` → **0.166.0-win32-x64** (alias; используется `dsh-codex-subscription`).
@@ -207,6 +207,6 @@ releaseDate: '2026-11-18T11:35:49.720Z'
 - `research/npm/*.tgz` + распакованные `x-<ver>/package/` (rc.1–rc.5, alpha.3), `research/npm/{codex,plugin,host}-time.json` (npm `@deepseek-ai/dsh-desktop` отсутствует — E404, поэтому desktop-time.json пустой);
 - `research/asar-peek.mjs` — разбор заголовка `app.asar` (без изменения чего-либо);
 - `research/nightly.yml` — манифест апдейтера;
-- Профиль `C:\Users\kubat\.dsh`, `~/.codex`, установленные пакеты — **не изменялись** (только чтение/копирование tarball'ов);
+- Профиль `<HOME>\.dsh`, `~/.codex`, установленные пакеты — **не изменялись** (только чтение/копирование tarball'ов);
 - Гигантские платформенные пакеты Codex не скачивались (0.166.0-бинарник уже локальный);
 - Не проверено (вне scope): фактический прогон app-server 0.166.0 против адаптера плагина; точная минимальная версия для `gpt-6-luna` по официальным notes.

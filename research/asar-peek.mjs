@@ -1,5 +1,7 @@
 import fs from 'node:fs';
-const file = 'D:/DeepSeek/resources/app.asar';
+// ASAR path comes from the command line or DSH_APP_ASAR; no local path stored here.
+const file = process.argv[2] ?? process.env.DSH_APP_ASAR;
+if (!file) { console.error('usage: node research/asar-peek.mjs <app.asar> (or set DSH_APP_ASAR)'); process.exit(2); }
 const fd = fs.openSync(file, 'r');
 const head = Buffer.alloc(16);
 fs.readSync(fd, head, 0, 16, 0);
