@@ -29,6 +29,8 @@ import type {
 } from '@deepseek-ai/dsh-subprocess'
 import {
   CodexAppServerWire,
+  CodexConfigVerificationError,
+  type CodexStartedFacts,
   type CodexWireFailureFacts,
 } from './wire.ts'
 
@@ -169,6 +171,11 @@ export interface CodexRunSpec {
   readonly cwd: string
   /** Profile-selected native model; omitted to preserve Codex settings. */
   readonly model?: string
+  /**
+   * Profile-selected native reasoning effort for the ephemeral thread.
+   * Omitted to preserve the Codex configuration.
+   */
+  readonly reasoningEffort?: string
   /** Profile-selected native non-interactive permission mode. */
   readonly permissionMode: CodexPermissionMode
   /** Explicit deployment/test environment layered after the shared scrub. */
@@ -188,6 +195,11 @@ export interface CodexRunSpec {
   readonly spawn: (spec: SubprocessSpawnSpec) => SubprocessHandle
   /** Diagnostic sink for a post-publication error flattened into a result. */
   readonly onError?: (error: Error, stopReason: SubagentStopReason) => void
+  /**
+   * Observation callback for the model/provider/effort the app-server actually
+   * reported for the new thread.
+   */
+  readonly onStarted?: (facts: CodexStartedFacts) => void
 }
 
 function thrown(value: unknown): Error {
@@ -297,6 +309,7 @@ export async function startCodexRun(
     child.stdin as NonNullable<SubprocessHandle['stdin']>,
     spec.permissionMode,
     spec.model,
+    spec.reasoningEffort,
   )
   const onStderr = (chunk: Buffer | string): void => {
     const bytes = typeof chunk === 'string' ? Buffer.from(chunk) : chunk
@@ -362,7 +375,11 @@ export async function startCodexRun(
     wire.start()
     await Promise.race([wire.initialize(request.signal), processFailure])
     startupStage = 'thread-start'
-    await Promise.race([wire.startThread(spec.cwd, request.signal), processFailure])
+    const startedFacts = await Promise.race([
+      wire.startThread(spec.cwd, request.signal),
+      processFailure,
+    ])
+    spec.onStarted?.(startedFacts)
   } catch (error: unknown) {
     request.signal.removeEventListener('abort', onAbort)
     const cancelledBeforeCleanup = runAbort.signal.aborted
@@ -387,6 +404,7 @@ export async function startCodexRun(
         `${failure.message}; ${cleanupFailure.message}`,
       )
     }
+    if (error instanceof CodexConfigVerificationError) throw error
     if (cancelledBeforeCleanup) {
       throw new Error('subagent-codex: request was aborted before run publication')
     }

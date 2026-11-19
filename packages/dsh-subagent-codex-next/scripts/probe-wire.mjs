@@ -274,6 +274,7 @@ export async function runProbe(options) {
     binaryId,
     command,
     model,
+    reasoningEffort,
     mode = "never",
     prompt = "Reply with exactly: OK",
     timeoutMs = 150_000,
@@ -281,7 +282,7 @@ export async function runProbe(options) {
     cwd = TMP_DIR,
     writeTurn = true,
     extraThreadParams = {},
-    slug = `${binaryId ?? "probe"}-${model ?? "model-default"}-${mode}`,
+    slug = `${binaryId ?? "probe"}-${model ?? "model-default"}-${reasoningEffort ?? "effort-default"}-${mode}`,
   } = options;
 
   const binary = command === undefined ? BINARIES[binaryId ?? "packaged"] : undefined;
@@ -296,6 +297,7 @@ export async function runProbe(options) {
     binaryId,
     binaryVersion: undefined,
     model: model ?? null,
+    reasoningEffort: reasoningEffort ?? null,
     mode,
     permissionParams: THREAD_PERMISSION_PARAMS[mode] ?? {},
     prompt,
@@ -528,6 +530,7 @@ export async function runProbe(options) {
           cwd,
           ephemeral: true,
           ...(model === undefined ? {} : { model }),
+          ...(reasoningEffort === undefined ? {} : { config: { model_reasoning_effort: reasoningEffort } }),
           ...THREAD_PERMISSION_PARAMS[mode],
           ...extraThreadParams,
         },
@@ -542,6 +545,9 @@ export async function runProbe(options) {
       elapsedMs: Date.now() - threadStart,
       threadId,
       ephemeral: thread.ephemeral,
+      reportedModel: typeof threadResult.model === "string" ? threadResult.model : null,
+      reportedModelProvider: typeof threadResult.modelProvider === "string" ? threadResult.modelProvider : null,
+      reportedReasoningEffort: typeof threadResult.reasoningEffort === "string" ? threadResult.reasoningEffort : null,
       // Newer builds may add fields; keep the whole response for drift analysis.
       result: threadResult,
     };
@@ -651,5 +657,8 @@ export function verdictLine(summary) {
   const info = t?.codexErrorInfo === undefined ? "" : ` codexErrorInfo=${JSON.stringify(t.codexErrorInfo)}`;
   const err = t?.error ? ` error=${JSON.stringify(t.error)}` : "";
   const out = summary.outputText === undefined ? "" : ` output=${JSON.stringify(summary.outputText)}`;
-  return `${summary.binaryId} | model=${summary.model ?? "(default)"} | mode=${summary.mode} | outcome=${summary.outcome}${t ? ` | turnStatus=${t.status}` : ""}${info}${err}${out} | ${summary.elapsedMs}ms`;
+  const started = summary.threadStart?.ok
+    ? ` | reported=${summary.threadStart.reportedModel ?? "?"}/${summary.threadStart.reportedReasoningEffort ?? "(native)"}`
+    : "";
+  return `${summary.binaryId} | model=${summary.model ?? "(default)"} | effort=${summary.reasoningEffort ?? "(native)"} | mode=${summary.mode}${started} | outcome=${summary.outcome}${t ? ` | turnStatus=${t.status}` : ""}${info}${err}${out} | ${summary.elapsedMs}ms`;
 }

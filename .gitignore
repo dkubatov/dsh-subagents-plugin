@@ -33,3 +33,7 @@ local-backups/
 # Local scratch files
 .tmp-*
 
+
+# Probe outputs (local only)
+packages/*/scripts/logs/
+packages/*/scripts/results/

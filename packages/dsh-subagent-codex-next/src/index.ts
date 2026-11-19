@@ -61,6 +61,12 @@ export interface Config {
   codexBin?: string
   /** Complete argv, already including `app-server --stdio`; wins over codexBin. */
   command?: string[]
+  /**
+   * Native Codex reasoning effort for this provider instance (for example
+   * `low`, `medium`, `high`, `xhigh`, `max`, `ultra`). Omitted to inherit the
+   * Codex configuration. The app-server response is verified after thread start.
+   */
+  reasoningEffort?: string
 }
 
 export const Config: z<Config> = z.object({
@@ -73,10 +79,11 @@ export const Config: z<Config> = z.object({
   codexPackage: z.string().min(1).default(DEFAULT_CODEX_PACKAGE),
   codexBin: z.string().min(1),
   command: z.array(z.string().min(1)),
+  reasoningEffort: z.string().min(1),
 })
 
-type ResolvedConfig = Omit<Required<Config>, 'model' | 'codexBin' | 'command'>
-  & Pick<Config, 'model' | 'codexBin' | 'command'>
+type ResolvedConfig = Omit<Required<Config>, 'model' | 'codexBin' | 'command' | 'reasoningEffort'>
+  & Pick<Config, 'model' | 'codexBin' | 'command' | 'reasoningEffort'>
 
 class CodexProvider implements SubagentProvider {
   readonly capabilities: SubagentCapabilities = NO_START_CAPABILITIES
@@ -109,10 +116,16 @@ class CodexProvider implements SubagentProvider {
       codexPackage: this.config.codexPackage,
       ...this.config.codexBin === undefined ? {} : { codexBin: this.config.codexBin },
       ...this.config.command === undefined ? {} : { command: this.config.command },
+      ...this.config.reasoningEffort === undefined ? {} : { reasoningEffort: this.config.reasoningEffort },
       spawn: spawnSpec => this.ctx.subprocess.spawn(spawnSpec),
       onError: (error, stopReason) => {
         this.ctx.logger.warn(
           `subagent-codex "${this.name}": child run failed (${stopReason}): ${error.message}`,
+        )
+      },
+      onStarted: facts => {
+        this.ctx.logger.info(
+          `subagent-codex "${this.name}": thread ready (model=${facts.model ?? 'native'}, provider=${facts.modelProvider ?? 'unknown'}, reasoningEffort=${facts.reasoningEffort ?? 'native'})`,
         )
       },
     }
@@ -141,6 +154,7 @@ export function apply(ctx: Context, config: Config): void {
     codexPackage: config.codexPackage ?? DEFAULT_CODEX_PACKAGE,
     ...codexBin === undefined ? {} : { codexBin },
     ...command === undefined ? {} : { command },
+    ...config.reasoningEffort === undefined ? {} : { reasoningEffort: config.reasoningEffort },
   }
   if (resolved.codexBin !== undefined && resolved.command !== undefined) {
     throw new Error('subagent-codex-next: configure either codexBin or command, not both')
