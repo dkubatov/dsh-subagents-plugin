@@ -139,6 +139,7 @@ var CodexAppServerWire = class {
 	input;
 	permissionMode;
 	model;
+	reasoningEffort;
 	transport;
 	fatal = Promise.withResolvers();
 	threadId;
@@ -157,10 +158,11 @@ var CodexAppServerWire = class {
 	inputEnded = false;
 	terminalObserved = false;
 	closed = false;
-	constructor(input, output, permissionMode, model) {
+	constructor(input, output, permissionMode, model, reasoningEffort) {
 		this.input = input;
 		this.permissionMode = permissionMode;
 		this.model = model;
+		this.reasoningEffort = reasoningEffort;
 		this.transport = new JsonRpcLineTransport(input, output);
 		this.fatal.promise.catch(() => {});
 		this.transport.onRequest((method, params) => this.handleServerRequest(method, params));
@@ -211,15 +213,23 @@ var CodexAppServerWire = class {
 	* @param signal - unpublished-start cancellation.
 	*/
 	async startThread(cwd, signal) {
-		const thread = object(object(await this.guarded(this.transport.request("thread/start", {
+		const response = object(await this.guarded(this.transport.request("thread/start", {
 			cwd,
 			ephemeral: true,
 			...this.model === void 0 ? {} : { model: this.model },
+			...this.reasoningEffort === void 0 ? {} : { config: { model_reasoning_effort: this.reasoningEffort } },
 			...THREAD_PERMISSION_PARAMS[this.permissionMode]
-		}, signal), signal), "thread/start response").thread, "thread/start thread");
+		}, signal), signal), "thread/start response");
+		const thread = object(response.thread, "thread/start thread");
 		const id = string(thread.id, "thread/start thread id");
 		if (thread.ephemeral !== true) throw new Error("subagent-codex: app-server did not create an ephemeral thread");
+		const observed = {
+			model: typeof response.model === "string" ? response.model : void 0,
+			modelProvider: typeof response.modelProvider === "string" ? response.modelProvider : void 0,
+			reasoningEffort: typeof response.reasoningEffort === "string" ? response.reasoningEffort : void 0
+		};
 		this.threadId = id;
+		return observed;
 	}
 	/**
 	* Submit the one text-only task and wait for this thread/turn's authoritative
@@ -691,7 +701,7 @@ async function startCodexRun(request, spec) {
 			category: "unknown"
 		}, thrown(error));
 	}
-	const wire = new CodexAppServerWire(child.stdout, child.stdin, spec.permissionMode, spec.model);
+	const wire = new CodexAppServerWire(child.stdout, child.stdin, spec.permissionMode, spec.model, spec.reasoningEffort);
 	const onStderr = (chunk) => {
 		const bytes = typeof chunk === "string" ? Buffer.from(chunk) : chunk;
 		try {
@@ -743,7 +753,8 @@ async function startCodexRun(request, spec) {
 		wire.start();
 		await Promise.race([wire.initialize(request.signal), processFailure]);
 		startupStage = "thread-start";
-		await Promise.race([wire.startThread(spec.cwd, request.signal), processFailure]);
+		const startedFacts = await Promise.race([wire.startThread(spec.cwd, request.signal), processFailure]);
+		spec.onStarted?.(startedFacts);
 	} catch (error) {
 		request.signal.removeEventListener("abort", onAbort);
 		const cancelledBeforeCleanup = runAbort.signal.aborted;
@@ -856,7 +867,8 @@ const Config = z.object({
 	disposeGraceMs: z.number().default(DEFAULT_DISPOSE_GRACE_MS),
 	codexPackage: z.string().min(1).default(DEFAULT_CODEX_PACKAGE),
 	codexBin: z.string().min(1),
-	command: z.array(z.string().min(1))
+	command: z.array(z.string().min(1)),
+	reasoningEffort: z.string().min(1)
 });
 var CodexProvider = class {
 	name;
@@ -886,9 +898,20 @@ var CodexProvider = class {
 			codexPackage: this.config.codexPackage,
 			...this.config.codexBin === void 0 ? {} : { codexBin: this.config.codexBin },
 			...this.config.command === void 0 ? {} : { command: this.config.command },
+			...this.config.reasoningEffort === void 0 ? {} : { reasoningEffort: this.config.reasoningEffort },
 			spawn: (spawnSpec) => this.ctx.subprocess.spawn(spawnSpec),
 			onError: (error, stopReason) => {
 				this.ctx.logger.warn(`subagent-codex "${this.name}": child run failed (${stopReason}): ${error.message}`);
+			},
+			onStarted: (facts) => {
+				const expectedModel = this.config.model;
+				const expectedEffort = this.config.reasoningEffort;
+				const mismatches = [];
+				if (expectedModel !== void 0 && facts.model !== expectedModel) mismatches.push(`model "${facts.model ?? "unknown"}" != "${expectedModel}"`);
+				if (expectedEffort !== void 0 && facts.reasoningEffort !== expectedEffort) mismatches.push(`reasoningEffort "${facts.reasoningEffort ?? "unknown"}" != "${expectedEffort}"`);
+				const detail = `model=${facts.model ?? "native"}, provider=${facts.modelProvider ?? "unknown"}, reasoningEffort=${facts.reasoningEffort ?? "native"}`;
+				if (mismatches.length > 0) this.ctx.logger.warn(`subagent-codex "${this.name}": thread started with unexpected configuration (${mismatches.join("; ")}; reported ${detail})`);
+				else this.ctx.logger.info(`subagent-codex "${this.name}": thread ready (${detail})`);
 			}
 		});
 	}
@@ -909,7 +932,8 @@ function apply(ctx, config) {
 		disposeGraceMs: config.disposeGraceMs,
 		codexPackage: config.codexPackage ?? DEFAULT_CODEX_PACKAGE,
 		...codexBin === void 0 ? {} : { codexBin },
-		...command === void 0 ? {} : { command }
+		...command === void 0 ? {} : { command },
+		...config.reasoningEffort === void 0 ? {} : { reasoningEffort: config.reasoningEffort }
 	};
 	if (resolved.codexBin !== void 0 && resolved.command !== void 0) throw new Error("subagent-codex-next: configure either codexBin or command, not both");
 	assertPositiveFinite("subagent-codex", "disposeGraceMs", resolved.disposeGraceMs);

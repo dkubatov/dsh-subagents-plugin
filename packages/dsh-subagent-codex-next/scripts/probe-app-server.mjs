@@ -6,14 +6,16 @@
 //
 // Usage:
 //   node scripts/probe-app-server.mjs --model gpt-6-luna
-//   node scripts/probe-app-server.mjs --model gpt-6.1-sol --mode approve-for-me
+//   node scripts/probe-app-server.mjs --model gpt-6.1-sol --effort high
+//   node scripts/probe-app-server.mjs --model gpt-6.1-terra --effort medium --mode approve-for-me
 //   node scripts/probe-app-server.mjs --no-turn              # handshake only, 0 tokens
 //   node scripts/probe-app-server.mjs --codex-package @openai/codex-next --model gpt-6-luna
-//   node scripts/probe-app-server.mjs --codex-bin "C:\\path\\codex.exe" --model gpt-6-luna
-//   node scripts/probe-app-server.mjs --command '["C:\\path\\codex.exe","app-server","--stdio"]'
+//   node scripts/probe-app-server.mjs --codex-bin "<path-to-codex.exe>" --model gpt-6-luna
+//   node scripts/probe-app-server.mjs --command '["<path-to-codex.exe>","app-server","--stdio"]'
 //
-// Omit --model to exercise the native default (config.toml `model =`), which is
-// the production path when no provider instance fixes a model.
+// --effort is sent as `thread/start.config.model_reasoning_effort`, exactly like
+// the provider; the printed "reported=" field shows what the app-server accepted.
+// Use scripts/probe-model-catalog.mjs to list the efforts each model advertises.
 //
 // Runs write raw JSONL frames to scripts/logs/ and a summary to scripts/results/.
 
@@ -22,10 +24,15 @@ import { LOG_DIR, RESULT_DIR, resolvePackagedCommand, runProbe, verdictLine } fr
 
 function parseArgs(argv) {
   const out = { mode: "never", noTurn: false };
+  const booleanFlags = new Set(["--no-turn", "--print-initialize", "--print-thread-start", "--json"]);
   for (let i = 0; i < argv.length; i += 1) {
     const token = argv[i];
     if (token === "--no-turn") {
       out.noTurn = true;
+      continue;
+    }
+    if (booleanFlags.has(token)) {
+      out[token.slice(2)] = true;
       continue;
     }
     if (!token.startsWith("--")) throw new Error(`unexpected argument ${token}`);
@@ -51,7 +58,7 @@ if (args.command !== undefined) {
 }
 
 const slug = args.slug
-  ?? `probe-${args.model ?? "default-model"}-${args.mode}${args.noTurn ? "-handshake" : ""}`;
+  ?? `probe-${args.model ?? "default-model"}-${args.effort ?? "default-effort"}-${args.mode}${args.noTurn ? "-handshake" : ""}`;
 
 mkdirSync(LOG_DIR, { recursive: true });
 mkdirSync(RESULT_DIR, { recursive: true });
@@ -62,6 +69,7 @@ const summary = await runProbe({
     ? undefined
     : args["codex-package"] ?? args["codex-bin"] ?? "custom-command",
   model: args.model,
+  reasoningEffort: args.effort,
   mode: args.mode,
   prompt: args.prompt ?? "Reply with exactly: OK",
   timeoutMs: Number(args["timeout-ms"] ?? 150_000),
@@ -77,6 +85,7 @@ if (summary.initialize.ok && args["print-initialize"]) {
 }
 if (summary.threadStart.ok && args["print-thread-start"]) {
   console.log(`thread/start: id=${summary.threadStart.threadId} ephemeral=${summary.threadStart.ephemeral}`);
+  console.log(`reported: model=${summary.threadStart.reportedModel ?? "?"} provider=${summary.threadStart.reportedModelProvider ?? "?"} effort=${summary.threadStart.reportedReasoningEffort ?? "(native)"}`);
 }
 console.log(`log: ${LOG_DIR}\\${slug}.jsonl`);
 console.log(`result: ${RESULT_DIR}\\${slug}.json`);

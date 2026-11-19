@@ -30,10 +30,10 @@ master GitHub-репозитория — тоже.
 | # | Изменение | Где |
 |---|---|---|
 | 1 | `dependencies.@openai/codex`: `0.153.4` → **`0.166.0`** (exact pin) | `package.json` |
-| 2 | Новые необязательные опции экземпляра провайдера: `codexPackage`, `codexBin`, `command` | `src/run.ts`, `src/index.ts`, `lib/index.js` |
+| 2 | Новые необязательные опции экземпляра провайдера: `codexPackage`, `codexBin`, `command`, `reasoningEffort` | `src/run.ts`, `src/index.ts`, `lib/index.js` |
 | 3 | Пакет называется `dsh-subagent-codex-next`; `name`-экспорт и id строк слоя получили суффикс `-next`, чтобы жить рядом с upstream | `package.json`, `cordis.patch.yml`, `lib/index.js` |
 | 4 | Пакет привязан к хосту: deps/peers — exact `0.2.2-rc.5`, `engines.dsh: >=0.2.2-rc.5 <0.2.3-0` | `package.json` |
-| 5 | Добавлен интеграционный probe `scripts/probe-app-server.mjs` | `scripts/` |
+| 5 | Добавлены интеграционные probe'ы `scripts/probe-app-server.mjs` и `scripts/probe-model-catalog.mjs` | `scripts/` |
 | 6 | В репозиторий положен TypeScript-исходник upstream (rc.5) с теми же правками; `lib/index.js` — собранный артефакт | `src/`, `lib/` |
 
 Wire-код (JSON-RPC, выбор ответа, approval-ответы, teardown) **не менялся** —
@@ -72,6 +72,49 @@ Wire-код (JSON-RPC, выбор ответа, approval-ответы, teardown)
         maxDepth: provider-managed
 ```
 
+### Усилие (reasoning effort)
+
+`reasoningEffort` передаётся в `thread/start` как
+`config.model_reasoning_effort`; это то же поле, что
+`model_reasoning_effort` в `~/.codex/config.toml`, но для конкретного
+экземпляра провайдера. Поддерживаются значения, которые рекламирует модель:
+`low`, `medium`, `high`, `xhigh`, `max`, `ultra` (см. матрицу по моделям в
+[`../../COMPATIBILITY.md`](../../COMPATIBILITY.md)).
+
+Пример отдельного инструмента «terra с high»:
+
+```yaml
+- insert:
+    - id: subagent-codex-next-terra-high
+      name: 'dsh-subagent-codex-next'
+      config:
+        providerName: codex-terra-high
+        model: gpt-6.1-terra
+        reasoningEffort: high
+    - id: tool-subagent-codex-next-terra-high
+      name: '@deepseek-ai/dsh-tool-subagent'
+      config:
+        provider: codex-terra-high
+        toolName: subagent_codex_terra_high
+        maxDepth: provider-managed
+```
+
+После старта треда плагин сверяет `model` / `reasoningEffort` из ответа
+app-server с конфигурацией и пишет в лог провайдера строку
+`thread ready (model=…, provider=…, reasoningEffort=…)`; при расхождении —
+предупреждение `thread started with unexpected configuration (…)`.
+Поведение JSON-RPC-адаптера при этом не меняется: конфигурация и диагностика —
+да, acceptance-логика upstream остаётся как есть.
+
+> Эхо `thread/start` подтверждает, что сервер принял запрошенное значение, но
+> **не** проверяет, что модель его реально поддерживает: Codex возвращает даже
+> заведомо невалидное значение. Авторитетный список — `model/list`
+> (`scripts/probe-model-catalog.mjs`); выбирайте усилие из матрицы.
+>
+> Каталог аккаунта динамический: на 2026-11-19 в нём есть также
+> `gpt-6.2-sol`/`gpt-6.2-astra`; примеры выше можно заменить на любую
+> доступную модель, проверив её каталогом.
+
 ## Конфигурация
 
 Поля upstream: `providerName`, `model`, `env`, `permissionMode`,
@@ -82,6 +125,7 @@ Wire-код (JSON-RPC, выбор ответа, approval-ответы, teardown)
 | `codexPackage` | `@openai/codex` | Имя пакета (или npm-alias, например `@openai/codex-next`) с `bin.codex` — откуда запускать app-server |
 | `codexBin` | — | Готовый исполняемый файл: запуск `codexBin app-server --stdio`; приоритетнее `codexPackage` |
 | `command` | — | Полный argv, уже включающий `app-server --stdio`; приоритетнее `codexBin` |
+| `reasoningEffort` | — (нативно из `~/.codex/config.toml`) | Усилие для `thread/start`: `low`, `medium`, `high`, `xhigh`, `max`, `ultra` (набор зависит от модели). Сверяется с ответом app-server |
 
 Приоритет: `command` → `codexBin` → `codexPackage`. `codexBin` и `command`
 взаимоисключающие — при одновременной настройке `apply()` падает.
@@ -98,6 +142,13 @@ Wire-код (JSON-RPC, выбор ответа, approval-ответы, teardown)
 - id: subagent-codex-next
   config:
     codexPackage: '@openai/codex-next'
+
+# модель + усилие для отдельного инструмента
+- id: subagent-codex-next-sol-high
+  config:
+    providerName: codex-sol-high
+    model: gpt-6.1-sol
+    reasoningEffort: high
 ```
 
 `env` уже позволяет передать `CODEX_HOME` и прочие переменные дочернего
@@ -119,18 +170,18 @@ Wire-код (JSON-RPC, выбор ответа, approval-ответы, teardown)
 Профиль: `C:\Users\<you>\.dsh\profiles\desktop`. Форк ставится как
 **отдельный bundle вместо прежнего upstream** (не оставляйте рядом rc.1).
 
-> **Версия хоста.** Артефакт `0.2.2-rc.5-dsh.3` привязан к DSH **0.2.2-rc.5**
+> **Версия хоста.** Артефакт `0.2.2-rc.5-dsh.4` привязан к DSH **0.2.2-rc.5**
 > (deps/peers exact). Для DSH `0.2.2-rc.1` остаётся предыдущий релиз
 > [`v0.2.2-rc.1-dsh.1`](https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.1-dsh.1).
 
 ### 0. Готовый tarball из GitHub Release (рекомендуется)
 
-Релиз: <https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.5-dsh.3>
+Релиз: <https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.5-dsh.4>
 
 ```json
 {
   "action": "install_bundle",
-  "target": "https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.3/dsh-subagent-codex-next-0.2.2-rc.5-dsh.3.tgz",
+  "target": "https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.4/dsh-subagent-codex-next-0.2.2-rc.5-dsh.4.tgz",
   "enabled": true
 }
 ```
@@ -143,13 +194,13 @@ Wire-код (JSON-RPC, выбор ответа, approval-ответы, teardown)
 ```powershell
 cd <workspace>\packages\dsh-subagent-codex-next
 npm pack --pack-destination .artifacts
-# .artifacts\dsh-subagent-codex-next-0.2.2-rc.5-dsh.3.tgz
+# .artifacts\dsh-subagent-codex-next-0.2.2-rc.5-dsh.4.tgz
 ```
 
 ### 2. Установить локальный tarball через `plugin_manager`
 
 ```json
-{"action":"install_bundle","target":"file:<workspace>\\packages\\dsh-subagent-codex-next\\.artifacts\\dsh-subagent-codex-next-0.2.2-rc.5-dsh.3.tgz","enabled":true}
+{"action":"install_bundle","target":"file:<workspace>\\packages\\dsh-subagent-codex-next\\.artifacts\\dsh-subagent-codex-next-0.2.2-rc.5-dsh.4.tgz","enabled":true}
 ```
 
 При установке pnpm поставит `@openai/codex@0.166.0` (пакет уже есть в
@@ -233,13 +284,20 @@ npm install
 node scripts/probe-app-server.mjs --model gpt-6-luna
 node scripts/probe-app-server.mjs --model gpt-6.1-sol --mode approve-for-me
 
-# 3) внешний payload без установки зависимостей пакета
-node scripts/probe-app-server.mjs --command '["node","C:\\...\\dsh-codex-subtask-cli\\bin\\codex.js","app-server","--stdio"]' --model gpt-6-luna
+# 3) проверка усилия без вызова модели (0 токенов): печатает reported model/effort
+node scripts/probe-app-server.mjs --model gpt-6.1-terra --effort high --no-turn --print-thread-start
+
+# 4) каталог моделей и их supported efforts (no turn)
+node scripts/probe-model-catalog.mjs
+
+# 5) внешний payload без установки зависимостей пакета
+node scripts/probe-app-server.mjs --command '["node","<path-to-codex-wrapper>","app-server","--stdio"]' --model gpt-6-luna
 ```
 
 Успех: `outcome=success | turnStatus=completed`, ответ модели в
 `scripts/results/*.json`, raw-кадры в `scripts/logs/*.jsonl` (env/токены не
-логируются). `--no-turn` ожидает `outcome=handshake-only`.
+логируются). `--no-turn` ожидает `outcome=handshake-only`; с `--effort`
+verdict-строка содержит `reported=<модель>/<усилие>`.
 
 ## Ограничения и что не проверено
 
@@ -255,6 +313,12 @@ node scripts/probe-app-server.mjs --command '["node","C:\\...\\dsh-codex-subtask
 - `@openai/codex@0.166.0` проверен probe'ом и сторонними отчётами; `0.170.0`
   не проверялся (см. `../../spikes/protocol/REPORT.md` §9). Менять пин — через
   `npm run probe` перед выкаткой.
+- `reasoningEffort`: эхо `thread/start` не является проверкой поддержки —
+  Codex возвращает и заведомо невалидное значение (`bogus`), и `ultra` для
+  `gpt-6-luna`, у которой его нет в каталоге. Плагин сверяет только эхо;
+  допустимость усилия для конкретной модели проверяйте по
+  `scripts/probe-model-catalog.mjs` (матрица в `../../COMPATIBILITY.md`).
+  Отдельным live-turn прогоном усилие пока не проверялось.
 - Alpha-бинарь приложения `0.169.0-alpha.11.1` тоже совместим, но как пин не
   рекомендуется (alpha, платформенный путь).
 - `lib/index.js` — собранный артефакт; `src/` приложен для ревью. Если нужен

@@ -23,18 +23,24 @@ The 'gpt-6-luna' model is not supported when using Codex with a ChatGPT account.
 ## Установка форка
 
 Пакет: [`packages/dsh-subagent-codex-next`](packages/dsh-subagent-codex-next/README.md),
-версия `0.2.2-rc.5-dsh.3`, Codex `0.166.0` (exact pin), DSH `0.2.2-rc.5` (deps/peers привязаны к этой версии хоста).
+версия `0.2.2-rc.5-dsh.4`, Codex `0.166.0` (exact pin), DSH `0.2.2-rc.5` (deps/peers привязаны к этой версии хоста).
+
+С `dsh.4` у каждого экземпляра провайдера можно задать `reasoningEffort`
+(`low`, `medium`, `high`, `xhigh`, `max`, `ultra` — набор зависит от модели).
+Подробности, матрица моделей и примеры — в
+[README пакета](packages/dsh-subagent-codex-next/README.md#усилие-reasoning-effort)
+и [COMPATIBILITY.md](COMPATIBILITY.md).
 
 ### 1. Скачать tarball из GitHub Release
 
 Страница релизов: <https://github.com/dkubatov/dsh-subagents-plugin/releases>
 
-- актуальный релиз для DSH **0.2.2-rc.5** — `v0.2.2-rc.5-dsh.3`;
+- актуальный релиз для DSH **0.2.2-rc.5** — `v0.2.2-rc.5-dsh.4`;
 - для DSH `0.2.2-rc.1` сохранён прежний релиз
   [`v0.2.2-rc.1-dsh.1`](https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.1-dsh.1).
 
 ```text
-https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.3/dsh-subagent-codex-next-0.2.2-rc.5-dsh.3.tgz
+https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.4/dsh-subagent-codex-next-0.2.2-rc.5-dsh.4.tgz
 ```
 
 ### 2. Установить как bundle через `plugin_manager`
@@ -42,13 +48,13 @@ https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-d
 ```json
 {
   "action": "install_bundle",
-  "target": "https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.3/dsh-subagent-codex-next-0.2.2-rc.5-dsh.3.tgz",
+  "target": "https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.4/dsh-subagent-codex-next-0.2.2-rc.5-dsh.4.tgz",
   "enabled": true
 }
 ```
 
 Либо локально, если tarball уже на диске:
-`"target": "file:D:\\path\\dsh-subagent-codex-next-0.2.2-rc.5-dsh.3.tgz"`.
+`"target": "file:D:\\path\\dsh-subagent-codex-next-0.2.2-rc.5-dsh.4.tgz"`.
 
 Перед установкой удалите из профиля несовместимый upstream-плагин
 `@deepseek-ai/dsh-subagent-codex@0.2.2-rc.1` (`plugin_manager` → `remove_bundle`):

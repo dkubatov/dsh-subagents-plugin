@@ -13,7 +13,7 @@ ranges) — это диапазон, а не доказательство; до�
 | DSH Desktop app | `44.7.0` |
 | `@deepseek-ai/dsh-desktop-runtime` | **`0.2.2-rc.5`** |
 | Node / pnpm runtime | `24.21.0` / `11.28.5` |
-| Форк | **`0.2.2-rc.5-dsh.3`** (предыдущие: `rc.5-dsh.1/.2`, `rc.1-dsh.1` для хоста rc.1) |
+| Форк | **`0.2.2-rc.5-dsh.4`** (предыдущие: `rc.5-dsh.3`, `rc.5-dsh.1/.2`, `rc.1-dsh.1` для хоста rc.1) |
 | Codex payload форка | `@openai/codex@0.166.0` (exact pin) |
 | App Codex CLI (`CODEX_CLI_PATH`) | `0.169.0-alpha.11.1` (форком не используется) |
 
@@ -39,6 +39,48 @@ ranges) — это диапазон, а не доказательство; до�
 | Регистрация инструмента | `subagent_codex_luna` в каталоге (тот же provider, что база) | DSH `0.2.2-rc.5` | ✅ зарегистрирован (отдельный вызов не делался) |
 
 Детали live-e2e и id сессий: `research/live-e2e-2026-11-19.md`.
+
+## Reasoning effort (`0.2.2-rc.5-dsh.4`)
+
+Новая опция экземпляра провайдера `reasoningEffort` передаётся в
+`thread/start` как `config.model_reasoning_effort`; `model` / `modelProvider` /
+`reasoningEffort` из ответа app-server пишутся в лог
+(`thread ready (…)`), а при расхождении с конфигурацией — warning
+`thread started with unexpected configuration (…)`. Это только диагностика:
+acceptance-логика JSON-RPC-адаптера не меняется (инвариант AGENTS §2).
+
+Каталог `model/list` (`@openai/codex@0.166.0`, ChatGPT-аккаунт, снят 2026-11-19):
+
+| Модель | Default effort | Supported efforts |
+|---|---|---|
+| `gpt-6.2-sol` | `low` | `low`, `medium`, `high`, `xhigh`, `max`, `ultra` |
+| `gpt-6.2-astra` | `low` | `low`, `medium`, `high`, `xhigh`, `max`, `ultra` |
+| `gpt-6.1-terra` | `low` | `low`, `medium`, `high`, `xhigh`, `max`, `ultra` |
+| `gpt-6.1-sol` | `low` | `low`, `medium`, `high`, `xhigh`, `max`, `ultra` |
+| `gpt-6-astra` | `medium` | `low`, `medium`, `high`, `xhigh`, `max`, `ultra` |
+| `gpt-6-sol` | `medium` | `low`, `medium`, `high`, `xhigh`, `max`, `ultra` |
+| `gpt-6-luna` | `medium` | `low`, `medium`, `high`, `xhigh`, `max` (без `ultra`) |
+
+Каталог аккаунта динамический: в течение 2026-11-19 сервер добавил
+`gpt-6.2-sol`/`gpt-6.2-astra` и сделал `gpt-6.2-sol` default-моделью аккаунта;
+провайдер без `model` продолжает жить по `~/.codex/config.toml`
+(`model = "gpt-6-luna"`). Есть также `gpt-5.6-*` и `gpt-5.5` (вне матрицы).
+
+Проверено probe'ом (no-turn, `thread/start` echo, тот же payload `0.166.0`):
+
+| Уровень | Что проверялось | Результат |
+|---|---|---|
+| `thread/start` echo | `gpt-6.2-sol` × `medium`, `high`, `ultra` | ✅ reported model/effort совпали |
+| `thread/start` echo | `gpt-6.1-sol` × `low`, `medium`, `high`, `xhigh`, `ultra` | ✅ совпали |
+| `thread/start` echo | `gpt-6.1-terra` × `low`, `medium`, `high`, `max` | ✅ совпали |
+| `thread/start` echo | `gpt-6-luna` × `medium`, `high`, `max` | ✅ совпали |
+| Каталог | `scripts/probe-model-catalog.mjs` на `0.166.0` | ✅ 10 моделей, матрица выше |
+| Негативный контроль | `gpt-6-luna` × `ultra` и × `bogus` | ⚠️ echo принимает оба значения — echo не валидирует поддержку; смотрите каталог |
+| Live-turn с усилием | реальный turn с `reasoningEffort: high` | ⏳ не прогонялся (нужен live-профиль с dsh.4) |
+
+**Важно:** `thread/start` возвращает запрошенное значение даже для
+неподдерживаемого усилия, поэтому плагинная сверка ловит только рассинхрон
+конфигурации, а не ошибку выбора. Допустимые комбинации — по таблице каталога.
 
 ## Найденная причина «пропавших» инструментов
 

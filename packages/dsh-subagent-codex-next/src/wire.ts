@@ -185,6 +185,13 @@ async function raceAbort<T>(pending: Promise<T>, signal: AbortSignal): Promise<T
   }
 }
 
+/** Facts the app-server reports for a newly started thread. */
+export interface CodexStartedFacts {
+  readonly model?: string
+  readonly modelProvider?: string
+  readonly reasoningEffort?: string
+}
+
 /**
  * One app-server connection and its single ephemeral thread/turn.
  *
@@ -228,6 +235,7 @@ export class CodexAppServerWire {
     output: Writable,
     private readonly permissionMode: CodexPermissionMode,
     private readonly model?: string,
+    private readonly reasoningEffort?: string,
   ) {
     this.transport = new JsonRpcLineTransport(input, output)
     // Fatal protocol state can arrive after the current guarded operation has
@@ -288,11 +296,14 @@ export class CodexAppServerWire {
    * @param cwd - selected child working directory.
    * @param signal - unpublished-start cancellation.
    */
-  async startThread(cwd: string, signal: AbortSignal): Promise<void> {
+  async startThread(cwd: string, signal: AbortSignal): Promise<CodexStartedFacts> {
     const response = object(await this.guarded(this.transport.request('thread/start', {
       cwd,
       ephemeral: true,
       ...this.model === undefined ? {} : { model: this.model },
+      ...this.reasoningEffort === undefined
+        ? {}
+        : { config: { model_reasoning_effort: this.reasoningEffort } },
       ...THREAD_PERMISSION_PARAMS[this.permissionMode],
     }, signal), signal), 'thread/start response')
     const thread = object(response.thread, 'thread/start thread')
@@ -300,7 +311,13 @@ export class CodexAppServerWire {
     if (thread.ephemeral !== true) {
       throw new Error('subagent-codex: app-server did not create an ephemeral thread')
     }
+    const observed: CodexStartedFacts = {
+      model: typeof response.model === 'string' ? response.model : undefined,
+      modelProvider: typeof response.modelProvider === 'string' ? response.modelProvider : undefined,
+      reasoningEffort: typeof response.reasoningEffort === 'string' ? response.reasoningEffort : undefined,
+    }
     this.threadId = id
+    return observed
   }
 
   /**
