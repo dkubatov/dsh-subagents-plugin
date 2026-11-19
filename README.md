@@ -103,6 +103,15 @@ node scripts/probe-app-server.mjs --model gpt-6-luna # один крошечны
 Ожидаемо: `outcome=handshake-only` / `outcome=success`, ответ модели в
 `scripts/results/`, raw-кадры в `scripts/logs/` (env и токены не логируются).
 
+## Как контрибьютить
+
+Перед любыми изменениями прочитайте [AGENTS.md](AGENTS.md) — там обязательные
+правила для агентов и людей.
+
+Коротко: **прямые коммиты в `main` запрещены**. Каждая задача — отдельная
+ветка (`docs/…`, `fix/…`, `feat/…`) от актуального `main` и отдельный pull
+request; PR сливается через GitHub (squash) после проверок, ветка удаляется.
+
 ## Лицензия
 
 [MIT](LICENSE). Форк основан на `@deepseek-ai/dsh-subagent-codex` (MIT, DeepSeek);

@@ -1,0 +1,178 @@
+# AGENTS.md — инструкции для агентов
+
+Этот файл обязателен для любого агента (человека или модели), который меняет
+этот репозиторий. Сначала прочитайте его, затем — `README.md`,
+`COMPATIBILITY.md`, `PLAN.md` и README пакета
+[`packages/dsh-subagent-codex-next`](packages/dsh-subagent-codex-next/README.md).
+
+---
+
+## 1. Ветки и pull request — обязательный процесс
+
+**Прямые коммиты и `git push` в `main` запрещены.** Каждая задача — отдельная
+ветка от актуального `main` и отдельный PR. Это относится и к правкам
+документации, и к версиям пакета, и к «однострочным» фиксам.
+
+1. Обновите `main`:
+
+   ```powershell
+   git switch main
+   git pull --ff-only
+   ```
+
+2. Создайте ветку с префиксом типа задачи:
+
+   ```powershell
+   git switch -c <type>/<short-slug>
+   ```
+
+   Допустимые `<type>`: `feat`, `fix`, `docs`, `chore`, `test`, `ci`.
+   `<short-slug>` — 2–5 слов через дефис, например:
+   `docs/agents-md`, `fix/preset-override-render`, `feat/codex-0-170-probe`.
+
+3. Сделайте изменения и прогоните проверки из раздела 4.
+
+4. Коммитьте в свою ветку (Conventional Commits, тема на английском):
+
+   ```powershell
+   git add -A
+   git commit -m "docs: add AGENTS.md with branch and PR rules"
+   git push -u origin HEAD
+   ```
+
+5. Откройте PR:
+
+   ```powershell
+   gh pr create --title "docs: add AGENTS.md with branch and PR rules" --body "Описание изменения и проверок"
+   ```
+
+6. После проверки PR сливается **через GitHub** (squash), а ветка удаляется:
+
+   ```powershell
+   gh pr merge --squash --delete-branch
+   git switch main
+   git pull --ff-only
+   ```
+
+Правила:
+
+- один PR — одна задача; не смешивайте фикс, рефакторинг и обновление версии;
+- не делайте force-push в `main`; в ветке PR допустим только
+  `git push --force-with-lease`;
+- если GitHub-доступа нет (например, локальная проверка) — всё равно работайте
+  в отдельной ветке и оставьте её готовой для PR, не переносите коммиты в
+  `main` вручную;
+- если PR не проходит проверки — исправляйте в той же ветке, не открывайте
+  новый PR на ту же задачу.
+
+---
+
+## 2. Что это за репозиторий
+
+Публичный форк Codex-провайдера субагентов для DeepSeek Harness (DSH).
+Пакет [`dsh-subagent-codex-next`](packages/dsh-subagent-codex-next/) —
+это `@deepseek-ai/dsh-subagent-codex@0.2.2-rc.5` с заменённым Codex-payload:
+вместо `@openai/codex@0.153.4` (ломается на `gpt-6.x`) используется
+`0.166.0`. Протокольный адаптер upstream не менялся; добавлены опции
+`codexPackage`, `codexBin`, `command`.
+
+Любое изменение пакета должно сохранять это свойство: **Codex-адаптер
+(JSON-RPC) остаётся upstream-кодом**, меняются только pin, конфигурация и
+диагностика.
+
+## 3. Структура
+
+| Путь | Назначение |
+|---|---|
+| `packages/dsh-subagent-codex-next/` | Публикуемый пакет-форк (`lib/index.js`, `src/`, `scripts/`, `cordis.patch.yml`) |
+| `PLAN.md` | План внедрения, фазы, риски, откат |
+| `COMPATIBILITY.md` | Что и на каких версиях DSH/Codex **реально проверено** |
+| `spikes/protocol/` | Спайк wire-протокола: скрипты, матрица, JSON-schema-дифф |
+| `research/` | Апстрим-ресёрч, override-проверка, снимки версий |
+| `tools/` | Служебные скрипты (сбор версий, чтение `app.asar`, рендер preset-override) |
+
+## 4. Проверки (Definition of Done)
+
+Перед PR выполните применимые пункты.
+
+- **Код пакета:** `node --check packages/dsh-subagent-codex-next/lib/index.js`
+- **Сборка tarball'а:** `cd packages/dsh-subagent-codex-next; npm pack --pack-destination .artifacts`
+  (tarball должен собраться; артефакты в `.artifacts/` не коммитятся).
+- **Handshake без токенов:** `node scripts/probe-app-server.mjs --no-turn`
+  (после `npm install` в каталоге пакета; 0 вызовов модели) — ожидается
+  `outcome=handshake-only`.
+- **Модельный probe** — только если изменение касается Codex payload,
+  протокола или конфигурации провайдера. Использует реальный ChatGPT-аккаунт:
+  `node scripts/probe-app-server.mjs --model gpt-6-luna` (и `gpt-6.1-sol`,
+  `gpt-6.1-terra`). Пишите результат в `COMPATIBILITY.md`; логи в
+  `scripts/logs/` не коммитятся.
+- **YAML/патчи:** проверьте синтаксис YAML-парсером; изменения профиля
+  `~/.dsh` и `~/.codex` в репозиторий не попадают.
+- **Документация:** обновите `COMPATIBILITY.md` при изменении проверенных
+  версий и `PLAN.md`/README — при изменении поведения и установки.
+
+PR описывает: что изменено, какие проверки выполнены, какие версии DSH/Codex
+затронуты.
+
+## 5. Чего нельзя делать
+
+- коммитить в `main` напрямую и пушить туда (см. раздел 1);
+- коммитить `node_modules/`, `.artifacts/`, `local-backups/`, `scripts/logs/`,
+  `scripts/results/`, сгенерированные JSON-схемы и локальные копии профиля;
+- коммитить секреты, токены, `auth.json`, содержимое `~/.codex` и личные пути
+  пользователя вне примеров;
+- менять пин `@openai/codex` без новой записи в `COMPATIBILITY.md` и прогона
+  probe: `0.170.0` не проверен, `0.166.0` — проверенный baseline;
+- менять живой профиль DSH (`~/.dsh/profiles/…`) и `~/.codex` в рамках задач
+  этого репозитория без явной просьбы владельца: профиль — пользовательская
+  конфигурация;
+- публиковать пакет в npm без явной просьбы, `npm login` и успешного
+  live-теста.
+
+## 6. Релиз пакета
+
+Схема версии: `<upstream DSH version>-dsh.<n>` (например,
+`0.2.2-rc.5-dsh.2`). Зависимости и peers пакета **точно** соответствуют
+версии хоста, для которой он собран; новый хост — новый релиз.
+
+Порядок:
+
+1. bump `version` в `packages/dsh-subagent-codex-next/package.json`;
+2. обновить README/COMPATIBILITY/PLAN (ссылки на релиз, проверенные версии);
+3. `npm pack --pack-destination .artifacts`, пересчитать `SHA256SUMS.txt`;
+4. изменения — через ветку и PR (раздел 1);
+5. после merge — GitHub Release:
+
+   ```powershell
+   gh release create v<version> <tarball> <SHA256SUMS> --title "..." --prerelease --notes-file <notes>
+   ```
+
+6. npm-публикация — только после успешного live-теста и `npm login`
+   владельца: `npm publish --tag next` (prerelease-версию не помещать в `latest`).
+
+## 7. Ключевые технические факты
+
+- Upstream-плагин байт-идентичен во всех опубликованных версиях и всегда
+  пинит `@openai/codex@0.153.4`; именно этот билд отдаёт
+  `HTTP 400 model_not_found` для `gpt-6.x` при ChatGPT-аккаунте.
+- Wire-последовательность плагина проверена на `0.166.0` и
+  `0.169.0-alpha.11.1`: правки JSON-RPC не требуются (см.
+  `spikes/protocol/REPORT.md`).
+- DSH `0.2.2-rc.5`: инструменты делегирования **preset-scoped**; web-bundle
+  выключает Host-строки `@deepseek-ai/dsh-tool-subagent`. Поэтому инструменты
+  `subagent_codex*` монтируются в Agent Preset (override `preset-standard`), а
+  bundle-патч форка регистрирует только provider. Подробности —
+  `COMPATIBILITY.md`.
+- Schemastery материализует отсутствующий массив `command` как `[]`; в
+  `apply()` пустые `command`/`codexBin` нормализуются в `undefined` — не
+  ломайте это поведение.
+- `probe-app-server.mjs` повторяет ровно ту JSON-RPC последовательность, что
+  использует провайдер; `--no-turn` не вызывает модель.
+
+## 8. Коммиты и язык
+
+- Conventional Commits, тема на английском: `fix: …`, `docs: …`, `feat: …`.
+- Документация в репозитории — на русском; код, package.json, commit subject —
+  на английском.
+- В PR указывайте, какие проверки выполнены и что осталось непроверенным;
+  не выдавайте диапазон `engines.dsh`/peers за протестированные версии.
