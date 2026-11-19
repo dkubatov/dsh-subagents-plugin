@@ -111,6 +111,8 @@ node scripts/probe-app-server.mjs --model gpt-6-luna # один крошечны
 Коротко: **прямые коммиты в `main` запрещены**. Каждая задача — отдельная
 ветка (`docs/…`, `fix/…`, `feat/…`) от актуального `main` и отдельный pull
 request; PR сливается через GitHub (squash) после проверок, ветка удаляется.
+Правило действует на уровне GitHub (ruleset `main: pull requests only`):
+прямой push в `main` отклоняется, force-push и удаление `main` запрещены.
 
 ## Лицензия
 
