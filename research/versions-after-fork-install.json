@@ -14,7 +14,7 @@
     }
   },
   "profile": {
-    "path": "C:\\Users\\kubat\\.dsh\\profiles\\desktop",
+    "path": "<DSH_PROFILE_DIR>",
     "bundles": [
       "@deepseek-ai/dsh-base",
       "@deepseek-ai/dsh-web-app",
@@ -43,7 +43,7 @@
     "codexCliVersion": "codex-cli 0.153.4"
   },
   "appCodex": {
-    "path": "C:\\Users\\kubat\\AppData\\Local\\OpenAI\\Codex\\bin\\22fc0d1de88fa0c1\\codex.exe",
+    "path": "<CODEX_CLI_PATH>",
     "version": "codex-cli 0.169.0-alpha.11.1"
   },
   "fork": {

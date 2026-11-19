@@ -15,7 +15,7 @@
             "elapsedMs": 266,
             "result": {
               "userAgent": "deepseek-harness/0.169.0-alpha.11.1 (Windows 10.0.19045; x86_64) unknown (deepseek-harness; 0.0.1)",
-              "codexHome": "C:\\Users\\kubat\\.codex",
+              "codexHome": "<HOME>\\.codex",
               "platformFamily": "windows",
               "platformOs": "windows"
             }
@@ -97,7 +97,7 @@
             "elapsedMs": 261,
             "result": {
               "userAgent": "deepseek-harness/0.169.0-alpha.11.1 (Windows 10.0.19045; x86_64) unknown (deepseek-harness; 0.0.1)",
-              "codexHome": "C:\\Users\\kubat\\.codex",
+              "codexHome": "<HOME>\\.codex",
               "platformFamily": "windows",
               "platformOs": "windows"
             }
@@ -178,7 +178,7 @@
             "elapsedMs": 280,
             "result": {
               "userAgent": "deepseek-harness/0.169.0-alpha.11.1 (Windows 10.0.19045; x86_64) unknown (deepseek-harness; 0.0.1)",
-              "codexHome": "C:\\Users\\kubat\\.codex",
+              "codexHome": "<HOME>\\.codex",
               "platformFamily": "windows",
               "platformOs": "windows"
             }
@@ -264,7 +264,7 @@
             "elapsedMs": 5302,
             "result": {
               "userAgent": "deepseek-harness/0.166.0 (Windows 10.0.19045; x86_64) unknown (deepseek-harness; 0.0.1)",
-              "codexHome": "C:\\Users\\kubat\\.codex",
+              "codexHome": "<HOME>\\.codex",
               "platformFamily": "windows",
               "platformOs": "windows"
             }
@@ -349,7 +349,7 @@
             "elapsedMs": 6480,
             "result": {
               "userAgent": "deepseek-harness/0.166.0 (Windows 10.0.19045; x86_64) unknown (deepseek-harness; 0.0.1)",
-              "codexHome": "C:\\Users\\kubat\\.codex",
+              "codexHome": "<HOME>\\.codex",
               "platformFamily": "windows",
               "platformOs": "windows"
             }
@@ -433,7 +433,7 @@
             "elapsedMs": 5736,
             "result": {
               "userAgent": "deepseek-harness/0.166.0 (Windows 10.0.19045; x86_64) unknown (deepseek-harness; 0.0.1)",
-              "codexHome": "C:\\Users\\kubat\\.codex",
+              "codexHome": "<HOME>\\.codex",
               "platformFamily": "windows",
               "platformOs": "windows"
             }
@@ -522,7 +522,7 @@
             "elapsedMs": 1272,
             "result": {
               "userAgent": "deepseek-harness/0.153.4 (Windows 10.0.19045; x86_64) unknown (deepseek-harness; 0.0.1)",
-              "codexHome": "C:\\Users\\kubat\\.codex",
+              "codexHome": "<HOME>\\.codex",
               "platformFamily": "windows",
               "platformOs": "windows"
             }
@@ -599,7 +599,7 @@
             "elapsedMs": 2462,
             "result": {
               "userAgent": "deepseek-harness/0.153.4 (Windows 10.0.19045; x86_64) unknown (deepseek-harness; 0.0.1)",
-              "codexHome": "C:\\Users\\kubat\\.codex",
+              "codexHome": "<HOME>\\.codex",
               "platformFamily": "windows",
               "platformOs": "windows"
             }
@@ -675,7 +675,7 @@
             "elapsedMs": 836,
             "result": {
               "userAgent": "deepseek-harness/0.153.4 (Windows 10.0.19045; x86_64) unknown (deepseek-harness; 0.0.1)",
-              "codexHome": "C:\\Users\\kubat\\.codex",
+              "codexHome": "<HOME>\\.codex",
               "platformFamily": "windows",
               "platformOs": "windows"
             }

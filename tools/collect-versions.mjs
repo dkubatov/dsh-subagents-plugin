@@ -13,6 +13,7 @@
 import { createRequire } from 'node:module'
 import { execFileSync } from 'node:child_process'
 import { existsSync, readFileSync, readdirSync, mkdirSync, statSync, writeFileSync } from 'node:fs'
+import { homedir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -28,9 +29,14 @@ const outPath = outIndex >= 0
   ? args[outIndex + 1]
   : join(ROOT, 'research', `versions-${label}.json`)
 
-const DSH_APP_DIR = 'D:/DeepSeek'
-const DSH_ASAR = join(DSH_APP_DIR, 'resources', 'app.asar')
-const PROFILE_DIR = join(process.env.USERPROFILE ?? 'C:/Users/kubat', '.dsh', 'profiles', 'desktop')
+// Paths come from the environment, never from this file. Snapshots store
+// placeholders (<DSH_PROFILE_DIR>, <CODEX_CLI_PATH>) instead of real paths.
+const DSH_APP_DIR = process.env.DSH_APP_DIR
+  ?? (process.env.DSH_NODE_EXECUTABLE ? dirname(process.env.DSH_NODE_EXECUTABLE) : undefined)
+const DSH_ASAR = process.env.DSH_APP_ASAR
+  ?? (DSH_APP_DIR ? join(DSH_APP_DIR, 'resources', 'app.asar') : undefined)
+const PROFILE_DIR = process.env.DSH_PROFILE_DIR
+  ?? join(homedir(), '.dsh', 'profiles', 'desktop')
 const FORK_DIR = join(ROOT, 'packages', 'dsh-subagent-codex-next')
 
 function readJson(path) {
@@ -46,6 +52,7 @@ function safe(fn) {
 }
 
 function extractAsarJson(innerPath) {
+  if (!DSH_ASAR) throw new Error('set DSH_APP_ASAR or DSH_NODE_EXECUTABLE to read the installation')
   const buf = extractFile(DSH_ASAR, innerPath)
   return JSON.parse(buf.toString('utf8'))
 }
@@ -60,14 +67,18 @@ function codexVersion(argv, cwd) {
   return out.trim()
 }
 
-const appVersion = safe(() => readFileSync(join(DSH_APP_DIR, 'version'), 'utf8').trim())
+const appVersion = DSH_APP_DIR
+  ? safe(() => readFileSync(join(DSH_APP_DIR, 'version'), 'utf8').trim())
+  : { error: 'DSH_APP_DIR is unknown' }
 
 const desktopRuntime = safe(() => {
   const pkg = extractAsarJson('dsh/package.json')
   return { name: pkg.name, version: pkg.version }
 })
 
-const runtimeToolchain = safe(() => readJson(join(DSH_APP_DIR, 'resources', 'runtime', 'versions.json')))
+const runtimeToolchain = DSH_APP_DIR
+  ? safe(() => readJson(join(DSH_APP_DIR, 'resources', 'runtime', 'versions.json')))
+  : { error: 'DSH_APP_DIR is unknown' }
 
 const profilePackage = safe(() => readJson(join(PROFILE_DIR, 'package.json')))
 
@@ -85,7 +96,7 @@ const codexCli = safe(() => codexVersion([
 ], PROFILE_DIR))
 
 const appCodex = safe(() => {
-  const binRoot = join(process.env.LOCALAPPDATA ?? 'C:/Users/kubat/AppData/Local', 'OpenAI', 'Codex', 'bin')
+  const binRoot = join(process.env.LOCALAPPDATA ?? join(homedir(), 'AppData', 'Local'), 'OpenAI', 'Codex', 'bin')
   if (!existsSync(binRoot)) return { error: 'bin root not found' }
   const builds = readdirSync(binRoot, { withFileTypes: true })
     .filter(entry => entry.isDirectory())
@@ -93,7 +104,7 @@ const appCodex = safe(() => {
     .filter(path => existsSync(path))
   if (builds.length === 0) return { error: 'no codex.exe found' }
   const newest = builds.sort((a, b) => statSync(b).size - statSync(a).size)[0]
-  return { path: newest, version: codexVersion([newest, '--version'], ROOT) }
+  return { path: '<CODEX_CLI_PATH>', version: codexVersion([newest, '--version'], ROOT) }
 })
 
 const forkPkg = safe(() => readJson(join(FORK_DIR, 'package.json')))
@@ -107,7 +118,7 @@ const snapshot = {
     runtimeToolchain,
   },
   profile: {
-    path: PROFILE_DIR,
+    path: '<DSH_PROFILE_DIR>',
     bundles: safe(() => profilePackage.dsh?.profile?.bundles),
     dependencies: safe(() => profilePackage.dependencies),
   },
