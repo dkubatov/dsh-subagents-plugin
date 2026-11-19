@@ -1,7 +1,7 @@
 {
   "name": "dsh-subagent-codex-next",
   "description": "Fork of @deepseek-ai/dsh-subagent-codex for DeepSeek Harness 0.2.2-rc.5: modern Codex payload (gpt-6.x), configurable executable, probe tooling",
-  "version": "0.2.2-rc.5-dsh.2",
+  "version": "0.2.2-rc.5-dsh.3",
   "publishConfig": {
     "access": "public"
   },

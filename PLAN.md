@@ -5,13 +5,14 @@
 [апстрим-ресёрч](research/upstream-report.md), [override-проверка](research/override/REPORT.md),
 [форк](packages/dsh-subagent-codex-next/README.md).
 
-> **Обновление 2026-11-19 (после начала внедрения):** хост обновлён до DSH
-> `0.2.2-rc.5`; форк `0.2.2-rc.5-dsh.2` установлен в живой профиль
-> (`application: applied`), upstream-bundle выключен. На rc.5 инструменты
-> делегирования стали preset-scoped (Host-строки `tool-subagent*` web-bundle
-> выключает), поэтому в профиле добавлен override shipped-пресета `standard`.
-> Live e2e ожидает новой Session. Подробности и матрица —
-> [COMPATIBILITY.md](COMPATIBILITY.md).
+> **Обновление 2026-11-19 (результат внедрения):** хост обновлён до DSH
+> `0.2.2-rc.5`; форк `0.2.2-rc.5-dsh.3` установлен в живой профиль. Живой e2e
+> пройден: `subagent_codex`, `subagent_codex_terra`, `subagent_codex_sol`
+> вернули `OK` нативно через DSH. Причина ранних сбоев — затенение
+> `@deepseek-ai/dsh-tool-subagent@0.2.2-rc.1` из выключенного upstream-плагина
+> (а не preset-scoped архитектура): после его удаления Host-строки инструментов
+> активировались. Детали — [COMPATIBILITY.md](COMPATIBILITY.md),
+> [research/live-e2e-2026-11-19.md](research/live-e2e-2026-11-19.md).
 
 ---
 
@@ -203,7 +204,7 @@ npm pack --pack-destination .artifacts
 ```
 
 Далее — `plugin_manager install_bundle` с target
-`file:D:\Repos\DSH\plugins\subagents\packages\dsh-subagent-codex-next\.artifacts\dsh-subagent-codex-next-0.2.2-rc.5-dsh.2.tgz`,
+`file:D:\Repos\DSH\plugins\subagents\packages\dsh-subagent-codex-next\.artifacts\dsh-subagent-codex-next-0.2.2-rc.5-dsh.3.tgz`,
 `enabled: true` (можно попросить агента в этой сессии; операция требует
 danger-full-access/approval). После установки:
 
@@ -231,7 +232,7 @@ danger-full-access/approval). После установки:
       ожидаемые результаты.
 - [ ] **Пин-файл**: `package.json` + `npm run probe` в pre-release чеклисте.
 - [x] **Публикация/распространение**: GitHub-релиз tarball;
-      артефакт `v0.2.2-rc.5-dsh.2` для хоста 0.2.2-rc.5 (старый
+      артефакт `v0.2.2-rc.5-dsh.3` для хоста 0.2.2-rc.5 (старый
       `v0.2.2-rc.1-dsh.1` сохранён для хоста 0.2.2-rc.1).
 - [x] **Peer-политика**: артефакт привязан к версии хоста (deps/peers exact
       `0.2.2-rc.5`, `engines.dsh: >=0.2.2-rc.5 <0.2.3-0`); при следующем
@@ -328,15 +329,15 @@ danger-full-access/approval). После установки:
 
 Репозиторий опубликован публично: <https://github.com/dkubatov/dsh-subagents-plugin>.
 Актуальный релиз (хост 0.2.2-rc.5):
-<https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.5-dsh.2>
-(asset `dsh-subagent-codex-next-0.2.2-rc.5-dsh.2.tgz` + `SHA256SUMS.txt`).
+<https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.5-dsh.3>
+(asset `dsh-subagent-codex-next-0.2.2-rc.5-dsh.3.tgz` + `SHA256SUMS.txt`).
 Предыдущий релиз для хоста 0.2.2-rc.1:
 <https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.1-dsh.1>.
 
 Установка прямо из релиза (`plugin_manager install_bundle`):
 
 ```json
-{"action":"install_bundle","target":"https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.2/dsh-subagent-codex-next-0.2.2-rc.5-dsh.2.tgz","enabled":true}
+{"action":"install_bundle","target":"https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.3/dsh-subagent-codex-next-0.2.2-rc.5-dsh.3.tgz","enabled":true}
 ```
 
 Локальный репозиторий — корень этого рабочего пространства (`main`), remote
@@ -345,6 +346,6 @@ danger-full-access/approval). После установки:
 ```powershell
 cd packages/dsh-subagent-codex-next
 npm pack --pack-destination .artifacts
-# затем: commit + push; gh release upload v0.2.2-rc.5-dsh.2 .artifacts\*.tgz --clobber
+# затем: commit + push; gh release upload v0.2.2-rc.5-dsh.3 .artifacts\*.tgz --clobber
 ```
 

@@ -180,11 +180,16 @@ PR описывает: что изменено, какие проверки вы
 - Wire-последовательность плагина проверена на `0.166.0` и
   `0.169.0-alpha.11.1`: правки JSON-RPC не требуются (см.
   `spikes/protocol/REPORT.md`).
-- DSH `0.2.2-rc.5`: инструменты делегирования **preset-scoped**; web-bundle
-  выключает Host-строки `@deepseek-ai/dsh-tool-subagent`. Поэтому инструменты
-  `subagent_codex*` монтируются в Agent Preset (override `preset-standard`), а
-  bundle-патч форка регистрирует только provider. Подробности —
-  `COMPATIBILITY.md`.
+- DSH `0.2.2-rc.5`: delegation tools штатно preset-scoped (shipped `standard`
+  preset содержит `subagent`/`subagent_fork`, а базовые Host-строки
+  `tool-subagent` web-bundle выключает), **но** плагин может добавлять свои
+  Host-строки `tool-subagent` — они работают, если
+  `@deepseek-ai/dsh-tool-subagent` резолвится в совместимую rc.5-версию.
+  Главная ловушка: не оставляйте в профиле upstream
+  `@deepseek-ai/dsh-subagent-codex@0.2.2-rc.1` — его зависимость
+  `@deepseek-ai/dsh-tool-subagent@0.2.2-rc.1` затеняет rc.5 и отключает **все**
+  строки `tool-subagent`. Подробности — `COMPATIBILITY.md`,
+  `research/live-e2e-2026-11-19.md`.
 - Schemastery материализует отсутствующий массив `command` как `[]`; в
   `apply()` пустые `command`/`codexBin` нормализуются в `undefined` — не
   ломайте это поведение.

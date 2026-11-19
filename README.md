@@ -23,18 +23,18 @@ The 'gpt-6-luna' model is not supported when using Codex with a ChatGPT account.
 ## Установка форка
 
 Пакет: [`packages/dsh-subagent-codex-next`](packages/dsh-subagent-codex-next/README.md),
-версия `0.2.2-rc.5-dsh.2`, Codex `0.166.0` (exact pin), DSH `0.2.2-rc.5` (deps/peers привязаны к этой версии хоста).
+версия `0.2.2-rc.5-dsh.3`, Codex `0.166.0` (exact pin), DSH `0.2.2-rc.5` (deps/peers привязаны к этой версии хоста).
 
 ### 1. Скачать tarball из GitHub Release
 
 Страница релизов: <https://github.com/dkubatov/dsh-subagents-plugin/releases>
 
-- актуальный релиз для DSH **0.2.2-rc.5** — `v0.2.2-rc.5-dsh.2`;
+- актуальный релиз для DSH **0.2.2-rc.5** — `v0.2.2-rc.5-dsh.3`;
 - для DSH `0.2.2-rc.1` сохранён прежний релиз
   [`v0.2.2-rc.1-dsh.1`](https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.1-dsh.1).
 
 ```text
-https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.2/dsh-subagent-codex-next-0.2.2-rc.5-dsh.2.tgz
+https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.3/dsh-subagent-codex-next-0.2.2-rc.5-dsh.3.tgz
 ```
 
 ### 2. Установить как bundle через `plugin_manager`
@@ -42,17 +42,20 @@ https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-d
 ```json
 {
   "action": "install_bundle",
-  "target": "https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.2/dsh-subagent-codex-next-0.2.2-rc.5-dsh.2.tgz",
+  "target": "https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.5-dsh.3/dsh-subagent-codex-next-0.2.2-rc.5-dsh.3.tgz",
   "enabled": true
 }
 ```
 
 Либо локально, если tarball уже на диске:
-`"target": "file:D:\\path\\dsh-subagent-codex-next-0.2.2-rc.5-dsh.2.tgz"`.
+`"target": "file:D:\\path\\dsh-subagent-codex-next-0.2.2-rc.5-dsh.3.tgz"`.
 
-После установки: выключить upstream-bundle `@deepseek-ai/dsh-subagent-codex`,
-убрать его `insert`-строки из `cordis.patch.yml` профиля и перезапустить DSH —
-подробная инструкция и откат в
+Перед установкой удалите из профиля несовместимый upstream-плагин
+`@deepseek-ai/dsh-subagent-codex@0.2.2-rc.1` (`plugin_manager` → `remove_bundle`):
+его зависимость `@deepseek-ai/dsh-tool-subagent@0.2.2-rc.1` затеняет rc.5-пакет
+и не даёт смонтироваться ни одному инструменту делегирования. После установки
+форка инструменты обычно подхватываются live (HMR); если их нет — полностью
+перезапустите DSH. Подробная инструкция и откат —
 [README форка](packages/dsh-subagent-codex-next/README.md#установка-в-профиль-dsh).
 
 ### Пересборка tarball из исходников
@@ -78,6 +81,11 @@ npm pack --pack-destination .artifacts
    версиях `0.2.2-alpha.3`…`0.2.2-rc.5`; npm-тег `latest` (`0.0.1-rc.1`)
    старее установленной версии, а `next` (`0.2.2-rc.5`) не меняет Codex-pin.
    В master публичного `deepseek-harness` — тоже `0.153.4`.
+4. **Live e2e пройден.** На DSH `0.2.2-rc.5` нативные инструменты
+   `subagent_codex`, `subagent_codex_terra`, `subagent_codex_sol` вернули
+   `OK` на `gpt-6-luna` / `gpt-6.1-terra` / `gpt-6.1-sol`; детали —
+   [COMPATIBILITY.md](COMPATIBILITY.md) и
+   [research/live-e2e-2026-11-19.md](research/live-e2e-2026-11-19.md).
 
 ## Содержимое репозитория
 
