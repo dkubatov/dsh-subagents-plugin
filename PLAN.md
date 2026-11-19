@@ -313,4 +313,27 @@ danger-full-access/approval). После установки:
 | Override: проверка на копии профиля, команды, логи | [research/override/REPORT.md](research/override/REPORT.md) |
 | Форк-пакет + README/установка/откат | [packages/dsh-subagent-codex-next/](packages/dsh-subagent-codex-next/README.md) |
 | Probe-скрипты (спайк/форк) | `spikes/protocol/*.mjs`, `packages/dsh-subagent-codex-next/scripts/*.mjs` |
-| Служебный доступ к `app.asar` | `tools/extract.mjs`, `tools/asar-list.txt` |
+| Служебный доступ к `app.asar` | `tools/extract.mjs` |
+
+## 11. Публикация
+
+Репозиторий опубликован публично: <https://github.com/dkubatov/dsh-subagents-plugin>.
+Релиз с готовым tarball'ом:
+<https://github.com/dkubatov/dsh-subagents-plugin/releases/tag/v0.2.2-rc.1-dsh.1>
+(asset `dsh-subagent-codex-next-0.2.2-rc.1-dsh.1.tgz` + `SHA256SUMS.txt`).
+
+Установка прямо из релиза (`plugin_manager install_bundle`):
+
+```json
+{"action":"install_bundle","target":"https://github.com/dkubatov/dsh-subagents-plugin/releases/download/v0.2.2-rc.1-dsh.1/dsh-subagent-codex-next-0.2.2-rc.1-dsh.1.tgz","enabled":true}
+```
+
+Локальный репозиторий — корень этого рабочего пространства (`main`), remote
+`origin` указывает на GitHub. Обновление опубликованных артефактов:
+
+```powershell
+cd packages/dsh-subagent-codex-next
+npm pack --pack-destination .artifacts
+# затем: commit + push; gh release upload v0.2.2-rc.1-dsh.1 .artifacts\*.tgz --clobber
+```
+
