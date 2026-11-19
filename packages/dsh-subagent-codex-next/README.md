@@ -200,7 +200,7 @@ npm pack --pack-destination .artifacts
 ### 2. Установить локальный tarball через `plugin_manager`
 
 ```json
-{"action":"install_bundle","target":"file:D:\\Repos\\DSH\\plugins\\subagents\\packages\\dsh-subagent-codex-next\\.artifacts\\dsh-subagent-codex-next-0.2.2-rc.5-dsh.4.tgz","enabled":true}
+{"action":"install_bundle","target":"file:<workspace>\\packages\\dsh-subagent-codex-next\\.artifacts\\dsh-subagent-codex-next-0.2.2-rc.5-dsh.4.tgz","enabled":true}
 ```
 
 При установке pnpm поставит `@openai/codex@0.166.0` (пакет уже есть в
@@ -216,7 +216,8 @@ pnpm-store, если в профиле стоит `dsh-codex-subtask-cli` = alia
    `insert`-строки upstream-плагина и override `preset-standard` (если
    добавляли). Shipped-пресет `standard` должен остаться нетронутым: на rc.5
    он сам содержит preset-scoped `subagent`/`subagent_fork`, а строки форка —
-   Host-scoped.
+   Host-scoped. **После удаления override `preset-standard` обязателен полный
+   перезапуск DSH** (см. шаг 4).
 3. Bundle-патч форка регистрирует provider `codex` и базовый инструмент
    `subagent_codex` (модель — дефолт `~/.codex/config.toml`, т.е.
    `gpt-6-luna`). Дополнительные варианты добавляются патчем профиля:
@@ -243,9 +244,13 @@ pnpm-store, если в профиле стоит `dsh-codex-subtask-cli` = alia
          config: { provider: codex-terra, toolName: subagent_codex_terra, maxDepth: provider-managed }
    ```
 
-4. Активация Host-строк обычно происходит live (HMR), инструменты подхватывает
-   и текущая, и новая сессия. Если инструментов нет — перезапустить DSH
-   (полностью приложение) и открыть новую сессию.
+4. **Рестарт.** Если вы удалили override `preset-standard` (миграция со старой
+   preset-схемы), **полный перезапуск DSH обязателен** перед проверкой: HMR
+   обновляет Host-строки, но не пере-активирует preset-реестр, поэтому живой
+   процесс может сохранять старую композицию пресета. После рестарта откройте
+   новую сессию. Если override не было (чистая установка), Host-строки обычно
+   подхватываются live; при отсутствии инструментов всё равно нужен полный
+   рестарт и новая сессия.
 
 Ожидаемо: `subagent_codex`, `subagent_codex_luna`, `subagent_codex_sol`,
 `subagent_codex_terra`; каждый turn идёт с моделью gpt-6.x, в логах нет

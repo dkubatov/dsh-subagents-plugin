@@ -99,21 +99,21 @@ JSON-RPC-адаптера не нужны.
 
 Предусловия: бэкап `cordis.patch.yml` профиля; закрыты операции plugin-manager
 (не устанавливать/не удалять плагины в GUI в этот момент). Живой профиль:
-`C:\Users\kubat\.dsh\profiles\desktop`.
+`<DSH_PROFILE_DIR>`.
 
 ### 3.1. Override
 
 `pnpm` в PATH не установлен; рабочий запуск:
 
 ```powershell
-$pnpm = 'node D:\DeepSeek\resources\runtime\primary-runtime\dependencies\pnpm\bin\pnpm.cjs'
-cd C:\Users\kubat\.dsh\profiles\desktop
+$pnpm = 'node <DSH_INSTALL_DIR>\resources\runtime\primary-runtime\dependencies\pnpm\bin\pnpm.cjs'
+cd <DSH_PROFILE_DIR>
 Copy-Item pnpm-workspace.yaml pnpm-workspace.yaml.bak-before-override
 Copy-Item pnpm-lock.yaml     pnpm-lock.yaml.bak-before-override
 Copy-Item cordis.patch.yml   cordis.patch.yml.bak-before-gpt6
 ```
 
-В `C:\Users\kubat\.dsh\profiles\desktop\pnpm-workspace.yaml` добавить:
+В `<DSH_PROFILE_DIR>\pnpm-workspace.yaml` добавить:
 
 ```yaml
 overrides:
@@ -129,7 +129,7 @@ overrides:
 Проверка резолвинга ровно как в коде плагина:
 
 ```powershell
-node -e "const {createRequire}=require('node:module');const r=createRequire('C:/Users/kubat/.dsh/profiles/desktop/node_modules/@deepseek-ai/dsh-subagent-codex/lib/index.js');const p=r.resolve('@openai/codex/package.json');console.log(p,require(p).version)"
+node -e "const {createRequire}=require('node:module');const r=createRequire('<DSH_PROFILE_DIR>/node_modules/@deepseek-ai/dsh-subagent-codex/lib/index.js');const p=r.resolve('@openai/codex/package.json');console.log(p,require(p).version)"
 # ожидается: ...@openai\codex\package.json 0.166.0
 ```
 
@@ -177,12 +177,12 @@ node -e "const {createRequire}=require('node:module');const r=createRequire('C:/
    - `subagent_codex_terra` → `gpt-6.1-terra`; `subagent_codex_sol` → `gpt-6.1-sol`;
    - в логах/host stderr нет `model_not_found`;
    - `node scripts/probe-app-server.mjs --no-turn` для форка/Override — по желанию.
-3. Контрольная точка: `grep 0\.153\.4 C:\Users\kubat\.dsh\profiles\desktop\pnpm-lock.yaml` — пусто.
+3. Контрольная точка: `grep 0\.153\.4 <DSH_PROFILE_DIR>\pnpm-lock.yaml` — пусто.
 
 ### 3.4. Откат Phase 0
 
 ```powershell
-cd C:\Users\kubat\.dsh\profiles\desktop
+cd <DSH_PROFILE_DIR>
 Copy-Item pnpm-workspace.yaml.bak-before-override pnpm-workspace.yaml -Force
 Copy-Item pnpm-lock.yaml.bak-before-override     pnpm-lock.yaml -Force
 Copy-Item cordis.patch.yml.bak-before-gpt6      cordis.patch.yml -Force

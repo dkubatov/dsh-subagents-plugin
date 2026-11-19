@@ -17,7 +17,7 @@
 ## 1. Что именно проверялось
 
 Harness (`wire.mjs`) — точная реимплементация `CodexAppServerWire` + `startCodexRun` из
-`C:\Users\kubat\.dsh\profiles\desktop\node_modules\@deepseek-ai\dsh-subagent-codex\lib\index.js`
+`<DSH_PROFILE_DIR>\node_modules\@deepseek-ai\dsh-subagent-codex\lib\index.js`
 (873 строки, прочитан целиком), с теми же JSON-RPC кадрами:
 
 | шаг | кадр | поля |
@@ -39,12 +39,12 @@ Harness (`wire.mjs`) — точная реимплементация `CodexAppSe
 | `0.166.0` | `node %USERPROFILE%\.dsh\profiles\desktop\node_modules\dsh-codex-subtask-cli\bin\codex.js app-server --stdio` (пакет с `name:"@openai/codex"`, `version:"0.166.0"`) | `codex-cli 0.166.0` |
 | `plugin-0.153.4` | `node %USERPROFILE%\.dsh\profiles\desktop\node_modules\@openai\codex\bin\codex.js app-server --stdio` — пин плагина (`dependencies.@openai/codex = "0.153.4"`) | `codex-cli 0.153.4` |
 
-У всех трёх `initialize`-ответ содержит `codexHome: C:\Users\kubat\.codex` → тестировался один и тот же аккаунт/конфиг, что у плагина.
+У всех трёх `initialize`-ответ содержит `codexHome: <HOME>\.codex` → тестировался один и тот же аккаунт/конфиг, что у плагина.
 
 ## 2. Как воспроизвести
 
 ```powershell
-cd D:\Repos\DSH\plugins\subagents\spikes\protocol
+cd <workspace>\spikes\protocol
 
 # один прогон (matrix из одного бинаря/модели); turn с крошечным промптом
 node probe.mjs --binary 0.166.0 --model gpt-6.1-sol
@@ -119,7 +119,7 @@ cwd `spikes/protocol/tmp/probe`. 8 вызовов модели (7 кандида
 
 ```json
 {"userAgent":"deepseek-harness/<version> (Windows 10.0.19045; x86_64) unknown (deepseek-harness; 0.0.1)",
- "codexHome":"C:\\Users\\kubat\\.codex",
+ "codexHome":"<HOME>\\.codex",
  "platformFamily":"windows","platformOs":"windows"}
 ```
 
@@ -192,7 +192,7 @@ Server→client requests в этих прогонах не возникали (�
 - Проверен ровно текстовый turn без инструментов: approval-flow в approve-for-me живьём не исполнялся
   (но набор server-request схем идентичен, а живой `thread/start` с `approvalsReviewer:"auto_review"` принят).
 - Проверялась только одна последовательность плагина (one thread → one turn → dispose); resume/interrupt/steer не тестировались.
-- Тест шёл с реальным `~/.codex` (только чтение конфига/кэша; ephemeral threads), профиль `C:\Users\kubat\.dsh`,
+- Тест шёл с реальным `~/.codex` (только чтение конфига/кэша; ephemeral threads), профиль `<HOME>\.dsh`,
   `~/.codex/config.toml`, `auth.json`, `models_cache` и сам плагин не изменялись.
 - `@openai/codex@0.170.0` (latest npm) не проверялся — скрипты готовы (`npm install --prefix spikes/protocol/vendor @openai/codex@0.170.0` + тот же `run-matrix.mjs`).
 - Desktop-бинарь 0.169.0-alpha.11.1 — alpha-сборка; стабильность/поведение вне протокола не оценивались.

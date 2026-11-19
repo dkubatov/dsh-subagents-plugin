@@ -9,7 +9,7 @@
     "sandbox": "workspace-write"
   },
   "prompt": "Reply with exactly: OK",
-  "cwd": "D:\\Repos\\DSH\\plugins\\subagents\\spikes\\protocol\\tmp\\probe",
+  "cwd": "<workspace>\\spikes\\protocol\\tmp\\probe",
   "startedAt": "2026-11-19T06:21:36.777Z",
   "outcome": "handshake-only",
   "elapsedMs": 4338,
@@ -18,7 +18,7 @@
     "elapsedMs": 2462,
     "result": {
       "userAgent": "deepseek-harness/0.153.4 (Windows 10.0.19045; x86_64) unknown (deepseek-harness; 0.0.1)",
-      "codexHome": "C:\\Users\\kubat\\.codex",
+      "codexHome": "<HOME>\\.codex",
       "platformFamily": "windows",
       "platformOs": "windows"
     }
@@ -51,7 +51,7 @@
           "type": "idle"
         },
         "path": null,
-        "cwd": "D:\\Repos\\DSH\\plugins\\subagents\\spikes\\protocol\\tmp\\probe",
+        "cwd": "<workspace>\\spikes\\protocol\\tmp\\probe",
         "cliVersion": "0.153.4",
         "source": "vscode",
         "canAcceptDirectInput": true,
@@ -65,9 +65,9 @@
       "model": "gpt-6-luna",
       "modelProvider": "openai",
       "serviceTier": null,
-      "cwd": "D:\\Repos\\DSH\\plugins\\subagents\\spikes\\protocol\\tmp\\probe",
+      "cwd": "<workspace>\\spikes\\protocol\\tmp\\probe",
       "runtimeWorkspaceRoots": [
-        "D:\\Repos\\DSH\\plugins\\subagents\\spikes\\protocol\\tmp\\probe"
+        "<workspace>\\spikes\\protocol\\tmp\\probe"
       ],
       "instructionSources": [],
       "approvalPolicy": "on-request",
