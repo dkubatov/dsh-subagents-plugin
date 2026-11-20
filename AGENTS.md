@@ -190,10 +190,15 @@ PR описывает: что изменено, какие проверки вы
 - Wire-последовательность плагина проверена на `0.166.0` и
   `0.169.0-alpha.11.1`: правки JSON-RPC не требуются (см.
   `spikes/protocol/REPORT.md`).
-- DSH `0.2.2-rc.5`: delegation tools штатно preset-scoped (shipped `standard`
-  preset содержит `subagent`/`subagent_fork`, а базовые Host-строки
-  `tool-subagent` web-bundle выключает), **но** плагин может добавлять свои
-  Host-строки `tool-subagent` — они работают, если
+- DSH `0.2.2-rc.5`: shipped `standard` preset содержит preset-scoped
+  `subagent`/`subagent_fork`, а базовые Host-строки `tool-subagent` web-bundle
+  выключает. В этом профиле делегирование дополнительно смонтировано
+  **Host-строками** профиля: `subagent_ds` (провайдер `spawn`),
+  `subagent_fork_ds` (провайдер `fork`) и внешние `subagent_codex*`. Host-строки
+  применяются HMR и доступны сессиям независимо от ревизии Agent Preset;
+  preset-scoped версии после обновления DSH в уже идущей сессии могут
+  отсутствовать — для делегирования использовать `_ds`-алиасы. Плагин может
+  добавлять свои Host-строки `tool-subagent`, если
   `@deepseek-ai/dsh-tool-subagent` резолвится в совместимую rc.5-версию.
   Главная ловушка: не оставляйте в профиле upstream
   `@deepseek-ai/dsh-subagent-codex@0.2.2-rc.1` — его зависимость
@@ -312,23 +317,31 @@ PR описывает: что изменено, какие проверки вы
 | `subagent_codex_luna` | gpt-6-luna / `medium` | алиас предыдущего; предпочитать базовый инструмент |
 | `subagent_codex_sol` | gpt-6.1-sol / `medium` | обычный кодинг/исследование, когда нужен Codex-агент |
 | `subagent_codex_terra` | gpt-6.1-terra / `medium` | визуал/UI/скриншоты/computer-use |
-| `subagent` / `subagent_fork` (если смонтированы) | DeepSeek flash: `off`/`low`/`high`/`max`, `high` по умолчанию | нативные DeepSeek-субагенты; `subagent_fork` — с контекстом |
+| `subagent_ds` (Host) | DeepSeek flash: `off`/`low`/`high`/`max`, `high` по умолчанию; через `provider`/`model`/`reasoning_effort` можно выбрать GPT-маршрут из allowlist (субагентам `ultra` недоступен) | нативный spawn: чистый контекст, follow-up, выбор модели/усилия |
+| `subagent_fork_ds` (Host) | наследует модель/контекст root | нативный fork: контекст завершённых ходов |
 | ASTRA как субагент | — | **запрещено** |
 | DeepSeek-V4-Pro | — | **не использовать** (retired; запросы к `deepseek-v4-pro` роутятся на flash) |
 
+`subagent_ds`/`subagent_fork_ds` — **Host-scoped** строки профиля (провайдеры
+`spawn`/`fork`), поэтому они доступны во всех сессиях и не зависят от ревизии
+Agent Preset. Канонические `subagent`/`subagent_fork` из пресета могут
+появиться рядом; для предсказуемости использовать `_ds`-алиасы.
+
 Внешние `subagent_codex*` — листовые воркеры: они не порождают субагентов и
 не принимают follow-up; каждый вызов — ровно одна задача и один ответ.
-Нативные `subagent`/`subagent_fork` могут принимать follow-up; `subagent_fork`
-наследует контекст.
+Нативные `subagent_ds`/`subagent_fork_ds` могут принимать follow-up;
+`subagent_fork_ds` наследует контекст.
 
 ### 11.4. Усилия
 
-- **Codex-субагенты** (`subagent_codex*`): по умолчанию `medium`; `high` —
-  только после провала `medium`, не заранее.
-- **Нативные DeepSeek-субагенты** (`subagent`/`subagent_fork`, если
-  смонтированы): шкала `off`/`low`/`high`/`max` (в ней нет `medium`);
-  `high` — допустимый дефолт, `off`/`low` — механика, `max` — редко и только
-  для действительно сложных задач.
+- **Codex-субагенты** (`subagent_codex*`): всегда `medium` — у этих
+  инструментов нет per-call усилия; для `high` использовать `subagent_ds` с
+  GPT-маршрутом из allowlist.
+- **Нативные DeepSeek-субагенты** (`subagent_ds`/`subagent_fork_ds`, Host):
+  шкала `off`/`low`/`high`/`max` (в ней нет `medium`); `high` — допустимый
+  дефолт, `off`/`low` — механика, `max` — редко и только для действительно
+  сложных задач. Если выбран GPT-маршрут — действует шкала GPT, но `ultra`
+  субагентам недоступен.
 - `xhigh`/`ultra`/`max` Codex-субагентам не выдавать: это дело root или
   ручного переключения main на ASTRA.
 - Усилие — не способ исправить плохой промпт: сначала уточнить задачу и
@@ -339,8 +352,9 @@ PR описывает: что изменено, какие проверки вы
 ### 11.5. Эскалация
 
 1. root DeepSeek `high` → root DeepSeek `max` (без нового агента);
-2. нужен другой уровень/семья → `subagent_codex_sol` `medium`, при провале —
-   `high`;
+2. нужен другой уровень/семья → `subagent_ds` с GPT-маршрутом из allowlist
+   (`provider`/`model`/`reasoning_effort`); внешние `subagent_codex*` всегда
+   `medium`;
 3. ASTRA — только после **ручного** переключения main пользователем; root
    может работать на ASTRA сам, но не отдаёт её субагенту и не просит включить.
 
@@ -363,3 +377,14 @@ PR описывает: что изменено, какие проверки вы
 - Жёстких runtime-guards на «надобность» нет: это дисциплина в этом файле плюс
   лимиты `maxActiveSubagents = 4` и `maxDepth = 2`; отдельный enforcement —
   отдельная задача (плагин/guard).
+
+### 11.8. Стабильность композиции
+
+Делегирование держится на **Host-строках профиля**
+(`tool-subagent-native-spawn-ds`, `tool-subagent-native-fork-ds`,
+`tool-subagent-codex-next*`): они применяются HMR и не зависят от ревизии
+Agent Preset. Не переносить делегирование обратно в preset-scoped слой.
+После обновления DSH: проверить `plugin_manager` (строки `tool-subagent*` —
+`enabled: true`, `fiberPhase: active`) и наличие инструментов; если Host-строки
+не поднялись — полный рестарт DSH. Preset-scoped изменения требуют новой
+сессии.
